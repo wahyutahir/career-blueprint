@@ -799,36 +799,36 @@ public class SkillSynthesizerService {
      * 
      * Strict Formatting: HTML ONLY (<b>, <p>, <ul>, <li>, <br>), NO MARKDOWN (**)
      */
-    public String generateAnalysis(String name, List<String> skills) {
+    public String generateAnalysis(String nickname, List<String> userSkills) {
         StringBuilder analysis = new StringBuilder();
         
         // Template header
-        analysis.append("<p>Halo <b>").append(name).append("</b>, Selamat yaa.. lo udah sampe ke sini berarti keinginan lo buat berubah bener-bener kuat. Sekarang gak ada lagi yang bisa menahan laju perubahan lo.</p>");
+        analysis.append("<p>Halo <b>").append(nickname).append("</b>, Selamat yaa.. lo udah sampe ke sini berarti keinginan lo buat berubah bener-bener kuat. Sekarang gak ada lagi yang bisa menahan laju perubahan lo.</p>");
         
         analysis.append("<br><p>Seblumnya terima kasih telah membeli dan membaca ebook Career Blueprint - Strategi 90 Hari Menemukan Potensi Diri dan Menjadi Orang yang Dicari Dunia karya Wahyu Tahir.</p>");
         
-        analysis.append("<br><p>Begini <b>").append(name).append("</b>, sekarang kita lihat lo punya skill unik apa dari kepingan-kepingan skill nanggung lo itu.</p>");
+        analysis.append("<br><p>Begini <b>").append(nickname).append("</b>, sekarang kita lihat lo punya skill unik apa dari kepingan-kepingan skill nanggung lo itu.</p>");
         
         // List skills input
         analysis.append("<br><p>Lo masukin skill ");
-        for (int i = 0; i < skills.size(); i++) {
+        for (int i = 0; i < userSkills.size(); i++) {
             if (i > 0) {
-                if (i == skills.size() - 1) {
+                if (i == userSkills.size() - 1) {
                     analysis.append(" dan ");
                 } else {
                     analysis.append(", ");
                 }
             }
-            analysis.append("<b>").append(skills.get(i)).append("</b>");
+            analysis.append("<b>").append(userSkills.get(i)).append("</b>");
         }
         analysis.append(".</p>");
         
         analysis.append("<br><p>Itu keren banget loh, gak semua orang punya skill-skill itu.</p>");
         
-        // Skill unik (irisan)
-        analysis.append("<br><p>dari <b>").append(skills.size()).append("</b> skill yang lo masukin, lu berarti punya beberapa skill unik yang cuma lo doang yang punya, yaitu :</p>");
+        // Skill unik (irisan - SINTESIS)
+        analysis.append("<br><p>dari <b>").append(userSkills.size()).append("</b> skill yang lo masukin, lu berarti punya beberapa skill unik yang cuma lo doang yang punya, yaitu :</p>");
         
-        List<String> uniqueSkills = generateUniqueSkills(skills);
+        List<String> uniqueSkills = generateUniqueSkills(userSkills);
         analysis.append("<br><ul style='margin-left: 20px; margin-top: 8px;'>");
         for (String uniqueSkill : uniqueSkills) {
             analysis.append("<li style='margin-bottom: 6px;'><b>").append(uniqueSkill).append("</b></li>");
@@ -840,7 +840,7 @@ public class SkillSynthesizerService {
         
         analysis.append("<br><p>Lo bisa jadi :</p>");
         
-        List<String> jobs = generateJobs(skills, uniqueSkills);
+        List<String> jobs = generateJobs(userSkills, uniqueSkills);
         analysis.append("<br><ul style='margin-left: 20px; margin-top: 8px;'>");
         for (String job : jobs) {
             analysis.append("<li style='margin-bottom: 6px;'><b>").append(job).append("</b></li>");
@@ -852,7 +852,7 @@ public class SkillSynthesizerService {
         
         analysis.append("<br><p>Lu bisa lakuin :</p>");
         
-        List<String> tasks = generateTasks(skills);
+        List<String> tasks = generateTasks(userSkills);
         analysis.append("<br><ul style='margin-left: 20px; margin-top: 8px;'>");
         for (String task : tasks) {
             analysis.append("<li style='margin-bottom: 6px;'>").append(task).append("</li>");
@@ -871,13 +871,15 @@ public class SkillSynthesizerService {
     
     /**
      * Generate skill unik dari irisan skill user
-     * Logic: Analisis gabungan skill menjadi High-Value Skill yang langka di industri
+     * Logic: SINTESIS SKILL - Analisis gabungan skill menjadi High-Value Skill yang langka di industri
+     * DILARANG: Tambahkan "Expert", "Pro", atau "Master" di depan skill asli
+     * WAJIB: Synthesize skill combinations into new, specific, high-value skill names
      */
     private List<String> generateUniqueSkills(List<String> skills) {
         List<String> uniqueSkills = new ArrayList<>();
         String skillCombo = String.join("+", skills).toLowerCase();
         
-        // Logic irisan skill
+        // Logic sintesis skill - kombinasi spesifik
         if (skillCombo.contains("menulis") && skillCombo.contains("motor")) {
             uniqueSkills.add("Mobile Content Reporter");
             uniqueSkills.add("On-Site Storyteller");
@@ -902,11 +904,91 @@ public class SkillSynthesizerService {
             uniqueSkills.add("Data-Driven Sales Strategist");
             uniqueSkills.add("Revenue Intelligence Analyst");
             uniqueSkills.add("Sales Performance Consultant");
+        } else if (skillCombo.contains("menulis") && skillCombo.contains("sales")) {
+            uniqueSkills.add("Copywriting Sales Funnel");
+            uniqueSkills.add("Ebook Sales Conversion");
+            uniqueSkills.add("Content Marketing Strategist");
+        } else if (skillCombo.contains("menulis") && skillCombo.contains("social")) {
+            uniqueSkills.add("Social Media Content Strategist");
+            uniqueSkills.add("Community Engagement Writer");
+            uniqueSkills.add("Viral Content Architect");
+        } else if (skillCombo.contains("sales") && skillCombo.contains("social")) {
+            uniqueSkills.add("Social Sales Funnel Specialist");
+            uniqueSkills.add("Community Growth Strategist");
+            uniqueSkills.add("Influencer Partnership Manager");
+        } else if (skillCombo.contains("coding") && skillCombo.contains("data")) {
+            uniqueSkills.add("Data Engineering Specialist");
+            uniqueSkills.add("Analytics Platform Developer");
+            uniqueSkills.add("Business Intelligence Engineer");
+        } else if (skillCombo.contains("coding") && skillCombo.contains("marketing")) {
+            uniqueSkills.add("Marketing Automation Engineer");
+            uniqueSkills.add("Growth Hacking Developer");
+            uniqueSkills.add("MarTech Solution Architect");
+        } else if (skillCombo.contains("desain") && skillCombo.contains("coding")) {
+            uniqueSkills.add("Creative Technologist");
+            uniqueSkills.add("Interactive Media Developer");
+            uniqueSkills.add("Generative Art Programmer");
+        } else if (skillCombo.contains("menulis") && skillCombo.contains("desain")) {
+            uniqueSkills.add("Visual Storyteller");
+            uniqueSkills.add("Brand Narrative Designer");
+            uniqueSkills.add("Content Experience Architect");
+        } else if (skillCombo.contains("masak") && skillCombo.contains("desain")) {
+            uniqueSkills.add("Food Styling Specialist");
+            uniqueSkills.add("Culinary Brand Creator");
+            uniqueSkills.add("Menu Experience Designer");
+        } else if (skillCombo.contains("masak") && skillCombo.contains("sales")) {
+            uniqueSkills.add("Food Sales Strategist");
+            uniqueSkills.add("Culinary Business Developer");
+            uniqueSkills.add("Restaurant Revenue Optimizer");
+        } else if (skillCombo.contains("mengajar") && skillCombo.contains("motor")) {
+            uniqueSkills.add("Mobile Education Specialist");
+            uniqueSkills.add("Field Training Coordinator");
+            uniqueSkills.add("On-Site Learning Facilitator");
+        } else if (skillCombo.contains("mengajar") && skillCombo.contains("desain")) {
+            uniqueSkills.add("Visual Learning Designer");
+            uniqueSkills.add("Educational Content Creator");
+            uniqueSkills.add("Instructional Design Specialist");
+        } else if (skillCombo.contains("mengajar") && skillCombo.contains("coding")) {
+            uniqueSkills.add("Technical Education Developer");
+            uniqueSkills.add("Coding Bootcamp Instructor");
+            uniqueSkills.add("E-Learning Platform Creator");
         } else {
-            // Default logic: create unique combinations from input skills
-            for (int i = 0; i < Math.min(skills.size(), 3); i++) {
-                String skill = skills.get(i);
-                uniqueSkills.add("Expert " + skill);
+            // Default logic: Synthesize skill combinations without prefixes
+            if (skills.size() >= 2) {
+                uniqueSkills.add(skills.get(0) + " & " + skills.get(1) + " Specialist");
+                uniqueSkills.add(skills.get(0) + "-Based " + skills.get(1) + " Strategist");
+                uniqueSkills.add("Integrated " + skills.get(0) + " " + skills.get(1) + " Expert");
+            } else if (skills.size() == 1) {
+                String skill = skills.get(0).toLowerCase();
+                if (skill.contains("menulis") || skill.contains("writing")) {
+                    uniqueSkills.add("Content Strategy Specialist");
+                    uniqueSkills.add("Digital Storyteller");
+                    uniqueSkills.add("Brand Voice Architect");
+                } else if (skill.contains("desain") || skill.contains("design")) {
+                    uniqueSkills.add("Visual Identity Creator");
+                    uniqueSkills.add("Brand Experience Designer");
+                    uniqueSkills.add("Creative Problem Solver");
+                } else if (skill.contains("coding") || skill.contains("program")) {
+                    uniqueSkills.add("Solution Architect");
+                    uniqueSkills.add("Digital Product Builder");
+                    uniqueSkills.add("Technical Innovation Specialist");
+                } else if (skill.contains("masak") || skill.contains("cooking")) {
+                    uniqueSkills.add("Culinary Innovation Specialist");
+                    uniqueSkills.add("Food Experience Creator");
+                    uniqueSkills.add("Culinary Brand Developer");
+                } else if (skill.contains("sales")) {
+                    uniqueSkills.add("Revenue Growth Specialist");
+                    uniqueSkills.add("Business Development Strategist");
+                    uniqueSkills.add("Market Penetration Expert");
+                } else if (skill.contains("mengajar") || skill.contains("ngaji")) {
+                    uniqueSkills.add("Knowledge Transfer Specialist");
+                    uniqueSkills.add("Learning Experience Designer");
+                    uniqueSkills.add("Education Innovation Creator");
+                } else {
+                    uniqueSkills.add(skill + " Innovation Specialist");
+                    uniqueSkills.add(skill + " Strategy Architect");
+                    uniqueSkills.add(skill + " Solution Creator");
+                }
             }
         }
         
