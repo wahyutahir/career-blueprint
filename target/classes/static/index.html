@@ -718,6 +718,12 @@
             // Use HTML directly from backend (already formatted with <p>, <b>, <br>, <ul>)
             const descriptionEl = document.getElementById('identityDescription');
             descriptionEl.innerHTML = data.description;
+            
+            // Add styling to bold elements inside description
+            const boldElements = descriptionEl.querySelectorAll('b');
+            boldElements.forEach(el => {
+                el.className = 'text-cyan-300';
+            });
 
             // Set categories
             const categoriesContainer = document.getElementById('matchedCategories');
@@ -741,6 +747,12 @@
                     // Path is now HTML from backend, render it directly
                     pathEl.innerHTML = path;
                     pathsContainer.appendChild(pathEl);
+                });
+                
+                // Add styling to bold elements in monetization paths
+                const pathBoldElements = pathsContainer.querySelectorAll('b');
+                pathBoldElements.forEach(el => {
+                    el.className = 'text-cyan-300';
                 });
             }
 
