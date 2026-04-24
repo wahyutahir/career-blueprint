@@ -599,6 +599,10 @@ public class SkillSynthesizerService {
     }
 
     public Identity synthesizeIdentity(List<String> skills) {
+        return synthesizeIdentity("Lo", skills);
+    }
+
+    public Identity synthesizeIdentity(String nickname, List<String> skills) {
         // Map skills to categories
         Map<SkillCategory, List<String>> categorySkills = new HashMap<>();
         List<String> matchedSkills = new ArrayList<>();
@@ -613,7 +617,7 @@ public class SkillSynthesizerService {
         }
 
         if (categorySkills.isEmpty()) {
-            return generateDynamicIdentity(skills, new ArrayList<>(), new HashMap<>());
+            return generateDynamicIdentity(nickname, skills, new ArrayList<>(), new HashMap<>());
         }
 
         // Sort categories by count (descending)
@@ -634,10 +638,10 @@ public class SkillSynthesizerService {
             .collect(Collectors.toList());
 
         // Generate dynamic identity based on actual skills
-        return generateDynamicIdentity(matchedSkills, matchedCategories, categorySkills);
+        return generateDynamicIdentity(nickname, matchedSkills, matchedCategories, categorySkills);
     }
 
-    private Identity generateDynamicIdentity(List<String> skills, List<String> categories, Map<SkillCategory, List<String>> categorySkills) {
+    private Identity generateDynamicIdentity(String nickname, List<String> skills, List<String> categories, Map<SkillCategory, List<String>> categorySkills) {
         // Analyze dominant categories
         List<SkillCategory> topCategories = categorySkills.entrySet().stream()
             .sorted((e1, e2) -> Integer.compare(e2.getValue().size(), e1.getValue().size()))
@@ -648,8 +652,8 @@ public class SkillSynthesizerService {
         // Generate personalized title
         String title = generatePersonalizedTitle(topCategories, skills);
 
-        // Generate personalized description
-        String description = generatePersonalizedDescription(topCategories, skills, categorySkills);
+        // Generate personalized description with nickname
+        String description = generatePersonalizedDescription(nickname, topCategories, skills, categorySkills);
 
         // Generate personalized monetization paths
         List<String> monetizationPaths = generatePersonalizedMonetization(topCategories, skills);
@@ -1182,8 +1186,8 @@ public class SkillSynthesizerService {
     /**
      * Legacy method - kept for API compatibility
      */
-    private String generatePersonalizedDescription(List<SkillCategory> categories, List<String> skills, Map<SkillCategory, List<String>> categorySkills) {
-        return generateAnalysis("User", skills);
+    private String generatePersonalizedDescription(String nickname, List<SkillCategory> categories, List<String> skills, Map<SkillCategory, List<String>> categorySkills) {
+        return generateAnalysis(nickname, skills);
     }
     
     /**

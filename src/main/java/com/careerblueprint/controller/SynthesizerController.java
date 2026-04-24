@@ -20,12 +20,21 @@ public class SynthesizerController {
     }
 
     @PostMapping("/synthesize")
-    public ResponseEntity<Identity> synthesize(@RequestBody Map<String, List<String>> request) {
-        List<String> skills = request.get("skills");
+    public ResponseEntity<Identity> synthesize(@RequestBody Map<String, Object> request) {
+        String nickname = (String) request.get("nickname");
+        @SuppressWarnings("unchecked")
+        List<String> skills = (List<String>) request.get("skills");
+        
         if (skills == null || skills.size() < 3) {
             return ResponseEntity.badRequest().build();
         }
-        Identity result = synthesizerService.synthesizeIdentity(skills);
+        
+        // Use nickname if provided, otherwise default to "Lo"
+        if (nickname == null || nickname.trim().isEmpty()) {
+            nickname = "Lo";
+        }
+        
+        Identity result = synthesizerService.synthesizeIdentity(nickname, skills);
         return ResponseEntity.ok(result);
     }
 
