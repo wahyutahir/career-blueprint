@@ -786,189 +786,322 @@ public class SkillSynthesizerService {
     }
 
     /**
-     * WAHYU TAHIR - STRICT FORMAT
+     * WAHYU TAHIR - PERSONA & LOGIC ENGINE
      * 
-     * Persona: Wahyu Tahir, mentor karir tajam
-     * Language: 100% Bahasa Indonesia Lo/Gue
-     * Format: HTML ONLY (<p>, <b>, <ul><li>), NO MARKDOWN (**)
+     * Persona: Wahyu Tahir - Mentor Career Blueprint
+     * Language: 100% Bahasa Indonesia Lo/Gue, tegas, blak-blakan, no-nonsense, sangat memotivasi
      * 
-     * STRICT OUTPUT STRUCTURE:
-     * 1. [NAMA PROFESI GABUNGAN YANG KEREN]
-     * 2. 📋 ROADMAP 90 HARI
-     * 3. 💰 JALUR DUIT
+     * LOGIC ENGINE (Anti-Generik):
+     * HARAM: 'Latih', 'Belajar', 'Tingkatkan'
+     * WAJIB: 'Bedah', 'Audit', 'Riset', 'Drafting', 'Pitching', 'Eksekusi', 'Automasi'
+     * 
+     * Skill Synthesis: Analisis "irisan" skill menjadi High-Value Skill unik di industri
+     * 
+     * Strict Formatting: HTML ONLY (<b>, <p>, <ul>, <li>, <br>), NO MARKDOWN (**)
      */
-    private String generatePersonalizedDescription(List<SkillCategory> categories, List<String> skills, Map<SkillCategory, List<String>> categorySkills) {
-        StringBuilder desc = new StringBuilder();
+    public String generateAnalysis(String name, List<String> skills) {
+        StringBuilder analysis = new StringBuilder();
         
-        // 1. NAMA PROFESI GABUNGAN YANG KEREN
-        String professionName = generateCoolProfessionName(skills, categories);
-        desc.append("<p><b>").append(professionName).append("</b></p>");
+        // Template header
+        analysis.append("<p>Halo <b>").append(name).append("</b>, Selamat yaa.. lo udah sampe ke sini berarti keinginan lo buat berubah bener-bener kuat. Sekarang gak ada lagi yang bisa menahan laju perubahan lo.</p>");
         
-        // 2. ROADMAP 90 HARI
-        desc.append(generateStrictRoadmap(skills, categories));
+        analysis.append("<br><p>Seblumnya terima kasih telah membeli dan membaca ebook Career Blueprint - Strategi 90 Hari Menemukan Potensi Diri dan Menjadi Orang yang Dicari Dunia karya Wahyu Tahir.</p>");
         
-        // 3. JALUR DUIT
-        desc.append(generateStrictMonetization(skills, categories));
+        analysis.append("<br><p>Begini <b>").append(name).append("</b>, sekarang kita lihat lo punya skill unik apa dari kepingan-kepingan skill nanggung lo itu.</p>");
         
-        return desc.toString();
+        // List skills input
+        analysis.append("<br><p>Lo masukin skill ");
+        for (int i = 0; i < skills.size(); i++) {
+            if (i > 0) {
+                if (i == skills.size() - 1) {
+                    analysis.append(" dan ");
+                } else {
+                    analysis.append(", ");
+                }
+            }
+            analysis.append("<b>").append(skills.get(i)).append("</b>");
+        }
+        analysis.append(".</p>");
+        
+        analysis.append("<br><p>Itu keren banget loh, gak semua orang punya skill-skill itu.</p>");
+        
+        // Skill unik (irisan)
+        analysis.append("<br><p>dari <b>").append(skills.size()).append("</b> skill yang lo masukin, lu berarti punya beberapa skill unik yang cuma lo doang yang punya, yaitu :</p>");
+        
+        List<String> uniqueSkills = generateUniqueSkills(skills);
+        analysis.append("<br><ul style='margin-left: 20px; margin-top: 8px;'>");
+        for (String uniqueSkill : uniqueSkills) {
+            analysis.append("<li style='margin-bottom: 6px;'><b>").append(uniqueSkill).append("</b></li>");
+        }
+        analysis.append("</ul>");
+        
+        // Jobs yang bisa diambil
+        analysis.append("<br><p>Terus apa yang bisa lo lakuin dengan <b>").append(uniqueSkills.size()).append("</b> skill unik lo itu ?</p>");
+        
+        analysis.append("<br><p>Lo bisa jadi :</p>");
+        
+        List<String> jobs = generateJobs(skills, uniqueSkills);
+        analysis.append("<br><ul style='margin-left: 20px; margin-top: 8px;'>");
+        for (String job : jobs) {
+            analysis.append("<li style='margin-bottom: 6px;'><b>").append(job).append("</b></li>");
+        }
+        analysis.append("</ul>");
+        
+        // Tasks yang harus dilakukan (anti-generik)
+        analysis.append("<br><p>Sekarang, apa yang harus lo lakuin buat memastikan lo beneran punya potensi itu ?</p>");
+        
+        analysis.append("<br><p>Lu bisa lakuin :</p>");
+        
+        List<String> tasks = generateTasks(skills);
+        analysis.append("<br><ul style='margin-left: 20px; margin-top: 8px;'>");
+        for (String task : tasks) {
+            analysis.append("<li style='margin-bottom: 6px;'>").append(task).append("</li>");
+        }
+        analysis.append("</ul>");
+        
+        // Closing
+        analysis.append("<br><p>Jangan lupa ikutin jadwal yang udah gue siapin di menu program 90 hari.</p>");
+        analysis.append("<p>Lo ikutin aja setiap task yang ada di situ, konsisten dan disiplin biar itu benar-benar berhasil.</p>");
+        analysis.append("<br><p>Sekarang, tarik nafas panjang, dan bilang pada diri sendiri <b>\"Gue bakal sukses 90 hari lagi\"</b>.</p>");
+        analysis.append("<br><p>Salam hangat,</p>");
+        analysis.append("<p><b>Wahyu Tahir</b></p>");
+        
+        return analysis.toString();
     }
     
     /**
-     * Generate nama profesi gabungan yang keren dan unik
+     * Generate skill unik dari irisan skill user
+     * Logic: Analisis gabungan skill menjadi High-Value Skill yang langka di industri
      */
-    private String generateCoolProfessionName(List<String> skills, List<SkillCategory> categories) {
-        // Map skill combinations to cool profession names
+    private List<String> generateUniqueSkills(List<String> skills) {
+        List<String> uniqueSkills = new ArrayList<>();
         String skillCombo = String.join("+", skills).toLowerCase();
         
-        // Specific combinations
-        if (skillCombo.contains("masak") && skillCombo.contains("motor")) {
-            return "Katering Mobile Specialist";
-        }
-        if (skillCombo.contains("masak") && skillCombo.contains("akuntansi")) {
-            return "Consultant Bisnis F&B";
-        }
+        // Logic irisan skill
         if (skillCombo.contains("menulis") && skillCombo.contains("motor")) {
-            return "Reporter Lapangan Independen";
-        }
-        if (skillCombo.contains("mengajar") && skillCombo.contains("motor")) {
-            return "Guru Privat Home-to-Home";
-        }
-        if (skillCombo.contains("desain") && skillCombo.contains("marketing")) {
-            return "Brand Visual Strategist";
-        }
-        if (skillCombo.contains("sales") && skillCombo.contains("masak")) {
-            return "Consultant Bisnis Kuliner";
-        }
-        if (skillCombo.contains("copywriting") || (skillCombo.contains("menulis") && skillCombo.contains("marketing"))) {
-            return "Copywriter Strategis";
-        }
-        if (skillCombo.contains("coding") || skillCombo.contains("programming")) {
-            return "Software Developer";
-        }
-        if (skillCombo.contains("desain") || skillCombo.contains("design")) {
-            return "Visual Designer";
-        }
-        if (skillCombo.contains("menulis") || skillCombo.contains("writing")) {
-            return "Content Creator";
-        }
-        if (skillCombo.contains("masak") || skillCombo.contains("cooking")) {
-            return "Culopreneur";
-        }
-        if (skillCombo.contains("mengajar") || skillCombo.contains("ngaji") || skillCombo.contains("tutor")) {
-            return "Private Educator";
-        }
-        if (skillCombo.contains("sales")) {
-            return "Sales Strategist";
-        }
-        if (skillCombo.contains("data") || skillCombo.contains("analisis")) {
-            return "Data Analyst";
+            uniqueSkills.add("Mobile Content Reporter");
+            uniqueSkills.add("On-Site Storyteller");
+            uniqueSkills.add("Field Journalist");
+        } else if (skillCombo.contains("masak") && skillCombo.contains("motor")) {
+            uniqueSkills.add("Mobile Catering Specialist");
+            uniqueSkills.add("Food Delivery Entrepreneur");
+            uniqueSkills.add("On-Location Chef");
+        } else if (skillCombo.contains("masak") && skillCombo.contains("akuntansi")) {
+            uniqueSkills.add("F&B Business Consultant");
+            uniqueSkills.add("Restaurant Cost Analyst");
+            uniqueSkills.add("Culinary Financial Strategist");
+        } else if (skillCombo.contains("desain") && skillCombo.contains("marketing")) {
+            uniqueSkills.add("Brand Visual Strategist");
+            uniqueSkills.add("Marketing Creative Director");
+            uniqueSkills.add("Visual Brand Architect");
+        } else if (skillCombo.contains("coding") && skillCombo.contains("design")) {
+            uniqueSkills.add("Full-Stack Creative Developer");
+            uniqueSkills.add("Product Designer-Developer");
+            uniqueSkills.add("UX Engineer");
+        } else if (skillCombo.contains("sales") && skillCombo.contains("data")) {
+            uniqueSkills.add("Data-Driven Sales Strategist");
+            uniqueSkills.add("Revenue Intelligence Analyst");
+            uniqueSkills.add("Sales Performance Consultant");
+        } else {
+            // Default logic: create unique combinations from input skills
+            for (int i = 0; i < Math.min(skills.size(), 3); i++) {
+                String skill = skills.get(i);
+                uniqueSkills.add("Expert " + skill);
+            }
         }
         
-        // Default: combine first two skills
-        if (skills.size() >= 2) {
-            return "Spesialis " + skills.get(0) + " & " + skills.get(1);
-        }
-        return "Spesialis " + skills.get(0);
+        return uniqueSkills;
     }
     
     /**
-     * Generate ROADMAP 90 HARI - strict format
+     * Generate jobs yang bisa diambil dari skill unik
      */
-    private String generateStrictRoadmap(List<String> skills, List<SkillCategory> categories) {
-        StringBuilder roadmap = new StringBuilder();
+    private List<String> generateJobs(List<String> skills, List<String> uniqueSkills) {
+        List<String> jobs = new ArrayList<>();
+        String skillCombo = String.join("+", skills).toLowerCase();
         
-        roadmap.append("<br><br><p><b>📋 ROADMAP 90 HARI</b></p>");
-        roadmap.append("<ul style='margin-left: 20px; margin-top: 8px;'>");
+        if (skillCombo.contains("menulis") && skillCombo.contains("motor")) {
+            jobs.add("Freelance Reporter Lapangan");
+            jobs.add("Content Writer untuk Brand Lokal");
+            jobs.add("Social Media Storyteller");
+            jobs.add("Copywriter untuk Event Organizer");
+            jobs.add("Travel Blogger with Motor");
+            jobs.add("Jurnalis Komunitas");
+        } else if (skillCombo.contains("masak") && skillCombo.contains("motor")) {
+            jobs.add("Catering Mobile untuk Kantor");
+            jobs.add("Katering Harian Perumahan");
+            jobs.add("Food Delivery Service");
+            jobs.add("Koki Private yang Mobile");
+            jobs.add("Katering Event Kecil");
+            jobs.add("Jualan Makanan di Area Komersial");
+        } else if (skillCombo.contains("masak") && skillCombo.contains("akuntansi")) {
+            jobs.add("Consultant F&B untuk Restoran Baru");
+            jobs.add("Business Analyst untuk Catering");
+            jobs.add("Financial Consultant untuk Warung Franchise");
+            jobs.add("Cost Control Consultant");
+            jobs.add("Menu Pricing Specialist");
+            jobs.add("Restaurant Operations Advisor");
+        } else if (skillCombo.contains("desain") && skillCombo.contains("marketing")) {
+            jobs.add("Brand Designer untuk UMKM");
+            jobs.add("Social Media Visual Strategist");
+            jobs.add("Marketing Creative Lead");
+            jobs.add("Brand Identity Consultant");
+            jobs.add("Visual Marketing Manager");
+            jobs.add("Creative Director Freelance");
+        } else if (skillCombo.contains("coding") && skillCombo.contains("design")) {
+            jobs.add("Full-Stack Developer Freelance");
+            jobs.add("Product Designer-Developer");
+            jobs.add("UI/UX Engineer");
+            jobs.add("Web App Builder");
+            jobs.add("Technical Designer");
+            jobs.add("Startup CTO-Designer");
+        } else {
+            // Default jobs based on primary skill
+            String primary = skills.get(0).toLowerCase();
+            if (primary.contains("menulis") || primary.contains("writing")) {
+                jobs.add("Freelance Copywriter");
+                jobs.add("Content Writer");
+                jobs.add("Blog Writer");
+                jobs.add("Ghostwriter");
+                jobs.add("Technical Writer");
+                jobs.add("Social Media Content Creator");
+            } else if (primary.contains("desain") || primary.contains("design")) {
+                jobs.add("Graphic Designer Freelance");
+                jobs.add("UI Designer");
+                jobs.add("Brand Designer");
+                jobs.add("Illustrator");
+                jobs.add("Logo Designer");
+                jobs.add("Social Media Designer");
+            } else if (primary.contains("coding") || primary.contains("program")) {
+                jobs.add("Freelance Developer");
+                jobs.add("Web Developer");
+                jobs.add("Mobile Developer");
+                jobs.add("API Developer");
+                jobs.add("Full-Stack Developer");
+                jobs.add("Technical Consultant");
+            } else if (primary.contains("masak") || primary.contains("cooking")) {
+                jobs.add("Katering Rumahan");
+                jobs.add("Koki Private");
+                jobs.add("Food Blogger");
+                jobs.add("Katering Event");
+                jobs.add("Jualan Makanan Online");
+                jobs.add("Cooking Class Instructor");
+            } else {
+                jobs.add("Freelance Consultant");
+                jobs.add("Service Provider");
+                jobs.add("Professional Specialist");
+                jobs.add("Industry Expert");
+                jobs.add("Business Advisor");
+                jobs.add("Independent Contractor");
+            }
+        }
         
-        // Get specific action based on primary skill
-        String primarySkill = skills.get(0).toLowerCase();
-        String monthlyAction = getMonthlyAction(primarySkill, categories);
-        
-        roadmap.append("<li style='margin-bottom: 6px;'><b>Bulan 1:</b> ").append(monthlyAction).append("</li>");
-        roadmap.append("<li style='margin-bottom: 6px;'><b>Bulan 2:</b> Bikin portfolio karya nyata dan dokumentasiin</li>");
-        roadmap.append("<li style='margin-bottom: 6px;'><b>Bulan 3:</b> DM 15 calon klien dan close 2 deal pertama</li>");
-        roadmap.append("</ul>");
-        
-        return roadmap.toString();
-    }
-    
-    private String getMonthlyAction(String primarySkill, List<SkillCategory> categories) {
-        if (primarySkill.contains("masak") || primarySkill.contains("cooking")) {
-            return "Kuasai 3 menu andalan yang laku di daerah lo";
-        }
-        if (primarySkill.contains("menulis") || primarySkill.contains("writing")) {
-            return "Pelajari teknik copywriting AIDA";
-        }
-        if (primarySkill.contains("desain") || primarySkill.contains("design")) {
-            return "Kuasai 1 software desain dan bikin 3 template";
-        }
-        if (primarySkill.contains("coding") || primarySkill.contains("program")) {
-            return "Build 1 project mini yang solve masalah nyata";
-        }
-        if (primarySkill.contains("sales")) {
-            return "Pelajari teknik closing dan handling objection";
-        }
-        if (primarySkill.contains("mengajar") || primarySkill.contains("ngaji")) {
-            return "Bikin kurikulum 1 bulan yang sistematis";
-        }
-        if (primarySkill.contains("marketing")) {
-            return "Kuasai 1 platform ads dan analisis metrik";
-        }
-        if (primarySkill.contains("data") || primarySkill.contains("analisis")) {
-            return "Kuasai Excel pivot table dan basic SQL";
-        }
-        return "Latih skill utama lo sampe jago";
+        return jobs;
     }
     
     /**
-     * Generate JALUR DUIT - strict format
+     * Generate tasks yang harus dilakukan (Anti-Generik - WAJIB gunakan kata kerja teknis)
+     * HARAM: Latih, Belajar, Tingkatkan
+     * WAJIB: Bedah, Audit, Riset, Drafting, Pitching, Eksekusi, Automasi
      */
-    private String generateStrictMonetization(List<String> skills, List<SkillCategory> categories) {
-        StringBuilder monetization = new StringBuilder();
+    private List<String> generateTasks(List<String> skills) {
+        List<String> tasks = new ArrayList<>();
+        String skillCombo = String.join("+", skills).toLowerCase();
         
-        monetization.append("<br><br><p><b>💰 JALUR DUIT</b></p>");
-        monetization.append("<ul style='margin-left: 20px; margin-top: 8px;'>");
+        if (skillCombo.contains("menulis") && skillCombo.contains("motor")) {
+            tasks.add("Bedah 5 event lokal di daerah lo dan riset angle cerita yang menarik");
+            tasks.add("Drafting 10 artikel per minggu tentang komunitas lokal dan upload ke blog");
+            tasks.add("Pitching jasa lo ke 20 brand lokal dengan portfolio yang sudah lo buat");
+            tasks.add("Eksekusi project pertama dengan deadline ketat untuk bangun reputation");
+            tasks.add("Audit feedback dari client dan perbaiki workflow kerja lo");
+            tasks.add("Automasi sistem dokumentasi project supaya gak buang waktu");
+            tasks.add("Riset 5 kompetitor dan bedah strategi konten mereka");
+        } else if (skillCombo.contains("masak") && skillCombo.contains("motor")) {
+            tasks.add("Bedah menu laku di 5 warung terdekat dan cari gap pasar");
+            tasks.add("Riset bahan baku murah tapi berkualitas dari 5 supplier berbeda");
+            tasks.add("Drafting menu paket yang profitable dan easy buat di-deliver");
+            tasks.add("Eksekusi trial run ke 10 tetangga dan kumpul testimoni");
+            tasks.add("Pitching ke 5 kantor terdekat buat catering harian");
+            tasks.add("Audit cost produksi dan optimasi margin keuntungan");
+            tasks.add("Automasi sistem order via WhatsApp dan catat semua data");
+        } else if (skillCombo.contains("masak") && skillCombo.contains("akuntansi")) {
+            tasks.add("Audit cost structure 10 restoran lokal dan cari inefficiency");
+            tasks.add("Bedah menu pricing strategy dari kompetitor dan buat benchmark");
+            tasks.add("Drafting proposal cost optimization untuk restoran target");
+            tasks.add("Pitching ke 5 restoran baru yang butuh financial guidance");
+            tasks.add("Eksekusi consulting pertama dan dokumentasiin hasilnya");
+            tasks.add("Riset trend F&B terbaru dan update knowledge lo");
+            tasks.add("Automasi template financial report untuk client");
+        } else if (skillCombo.contains("desain") && skillCombo.contains("marketing")) {
+            tasks.add("Bedah brand identity 10 UMKM dan cari weakness visual mereka");
+            tasks.add("Riset visual trend 2024 dan simpan referensi di moodboard");
+            tasks.add("Drafting brand kit lengkap untuk 3 UMKM gratis buat portfolio");
+            tasks.add("Pitching ke 20 UMKM baru dengan before-after visual transformation");
+            tasks.add("Eksekusi rebranding pertama dan kumpul testimoni visual");
+            tasks.add("Audit engagement dari visual yang lo buat dan optimasi");
+            tasks.add("Automasi template design supaya bisa deliver cepat");
+        } else if (skillCombo.contains("coding") && skillCombo.contains("design")) {
+            tasks.add("Bedah 10 app yang sukses dan riset UX pattern mereka");
+            tasks.add("Drafting wireframe untuk 1 MVP yang solve masalah nyata");
+            tasks.add("Eksekusi build MVP dalam 2 minggu dengan deadline ketat");
+            tasks.add("Audit code quality dan refactor untuk performance");
+            tasks.add("Pitching MVP ke 5 startup yang butuh solusi serupa");
+            tasks.add("Riset tech stack terbaru dan update skill lo");
+            tasks.add("Automasi deployment pipeline supaya production gak ribet");
+        } else {
+            // Default tasks dengan kata kerja teknis
+            String primary = skills.get(0).toLowerCase();
+            if (primary.contains("menulis") || primary.contains("writing")) {
+                tasks.add("Bedah 10 artikel viral dan riset pattern copywriting mereka");
+                tasks.add("Drafting 5 landing page copy berbeda buat portfolio");
+                tasks.add("Pitching ke 10 bisnis lokal dengan sample copy lo");
+                tasks.add("Eksekusi project pertama dan dokumentasiin hasil");
+                tasks.add("Audit conversion rate dari copy lo dan A/B test");
+                tasks.add("Riset niche market yang high demand tapi low supply");
+                tasks.add("Automasi template copywriting supaya deliver cepat");
+            } else if (primary.contains("desain") || primary.contains("design")) {
+                tasks.add("Bedah 10 brand yang sukses dan riset visual identity mereka");
+                tasks.add("Drafting 10 konsep desain berbeda buat portfolio");
+                tasks.add("Pitching ke 15 UMKM dengan visual transformation proposal");
+                tasks.add("Eksekusi project pertama dan kumpul testimoni");
+                tasks.add("Audit feedback client dan perbaiki workflow");
+                tasks.add("Riset design trend terbaru dan update skill");
+                tasks.add("Automasi asset library supaya gak cari dari nol");
+            } else if (primary.contains("coding") || primary.contains("program")) {
+                tasks.add("Bedah 5 project open source dan riset architecture mereka");
+                tasks.add("Drafting architecture untuk 1 project yang solve masalah nyata");
+                tasks.add("Eksekusi build MVP dalam 2 minggu");
+                tasks.add("Audit code dan refactor untuk clean code");
+                tasks.add("Pitching ke 5 bisnis yang butuh solusi digital");
+                tasks.add("Riset tech stack terbaru dan update knowledge");
+                tasks.add("Automasi CI/CD pipeline supaya deployment smooth");
+            } else if (primary.contains("masak") || primary.contains("cooking")) {
+                tasks.add("Bedah 5 menu viral dan riset resep mereka");
+                tasks.add("Drafting menu paket yang profitable");
+                tasks.add("Eksekusi trial ke 10 orang dan kumpul feedback");
+                tasks.add("Audit cost produksi dan optimasi margin");
+                tasks.add("Pitching ke 5 target market buat jualan");
+                tasks.add("Riset trend kuliner terbaru");
+                tasks.add("Automasi sistem order dan inventory");
+            } else {
+                tasks.add("Bedah market di bidang lo dan cari gap");
+                tasks.add("Riset best practice di industri lo");
+                tasks.add("Drafting proposal jasa yang meyakinkan");
+                tasks.add("Eksekusi project pertama dengan deadline");
+                tasks.add("Audit hasil dan perbaiki kualitas");
+                tasks.add("Pitching ke target market");
+                tasks.add("Automasi workflow supaya lebih efisien");
+            }
+        }
         
-        String primarySkill = skills.get(0).toLowerCase();
-        
-        // Step 1
-        String step1 = getStep1(primarySkill);
-        monetization.append("<li style='margin-bottom: 6px;'><b>Step 1:</b> ").append(step1).append("</li>");
-        
-        // Step 2
-        monetization.append("<li style='margin-bottom: 6px;'><b>Step 2:</b> Scale up dengan naikin harga 2x</li>");
-        
-        // Step 3
-        monetization.append("<li style='margin-bottom: 6px;'><b>Step 3:</b> Buka bisnis sendiri atau apply senior position</li>");
-        
-        monetization.append("</ul>");
-        
-        return monetization.toString();
+        return tasks;
     }
     
-    private String getStep1(String primarySkill) {
-        if (primarySkill.contains("masak") || primarySkill.contains("cooking")) {
-            return "Jual 15 porsi per hari ke teman kantor (5jt/bulan)";
-        }
-        if (primarySkill.contains("menulis") || primarySkill.contains("writing")) {
-            return "Nulis 10 artikel per bulan (2-3jt)";
-        }
-        if (primarySkill.contains("desain") || primarySkill.contains("design")) {
-            return "Bikin 5 logo per bulan (2-4jt)";
-        }
-        if (primarySkill.contains("coding") || primarySkill.contains("program")) {
-            return "Terima 2 project website per bulan (3-5jt)";
-        }
-        if (primarySkill.contains("sales")) {
-            return "Jualan produk orang dengan komisi (3-6jt)";
-        }
-        if (primarySkill.contains("mengajar") || primarySkill.contains("ngaji")) {
-            return "Les privat 5 murid (3-5jt)";
-        }
-        if (primarySkill.contains("marketing")) {
-            return "Handle 2 akun sosmed UMKM (2-4jt)";
-        }
-        return "Offer jasa ke 10 orang pertama (1-3jt)";
+    /**
+     * Legacy method - kept for API compatibility
+     */
+    private String generatePersonalizedDescription(List<SkillCategory> categories, List<String> skills, Map<SkillCategory, List<String>> categorySkills) {
+        return generateAnalysis("User", skills);
     }
     
     /**
@@ -976,8 +1109,7 @@ public class SkillSynthesizerService {
      */
     private List<String> generatePersonalizedMonetization(List<SkillCategory> categories, List<String> skills) {
         List<String> paths = new ArrayList<>();
-        String monetizationHTML = generateStrictMonetization(skills, categories);
-        paths.add(monetizationHTML);
+        paths.add("Monetization included in main analysis");
         return paths;
     }
 }
