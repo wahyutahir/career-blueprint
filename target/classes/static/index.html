@@ -715,19 +715,9 @@
             // Set title
             document.getElementById('identityTitle').textContent = data.title;
             
-            // Format description with proper HTML
+            // Use HTML directly from backend (already formatted with <p>, <b>, <br>, <ul>)
             const descriptionEl = document.getElementById('identityDescription');
-            let formattedDesc = data.description
-                .replace(/\*\*(.*?)\*\*/g, '<strong class="text-cyan-300">$1</strong>')  // Bold
-                .replace(/\n\n/g, '</p><p class="mt-4 text-zinc-300 text-lg leading-relaxed">')  // Paragraphs
-                .replace(/\n/g, '<br>');  // Line breaks
-            
-            // Wrap in paragraph if not already
-            if (!formattedDesc.startsWith('<p')) {
-                formattedDesc = '<p class="text-zinc-300 text-lg leading-relaxed">' + formattedDesc + '</p>';
-            }
-            
-            descriptionEl.innerHTML = formattedDesc;
+            descriptionEl.innerHTML = data.description;
 
             // Set categories
             const categoriesContainer = document.getElementById('matchedCategories');
@@ -741,21 +731,15 @@
                 });
             }
 
-            // Set monetization paths
+            // Set monetization paths (HTML from backend)
             const pathsContainer = document.getElementById('monetizationPaths');
             pathsContainer.innerHTML = '';
             if (data.monetizationPaths) {
                 data.monetizationPaths.forEach((path, index) => {
                     const pathEl = document.createElement('div');
-                    pathEl.className = 'flex items-start gap-3 p-4 bg-zinc-950/50 rounded-xl border border-zinc-800/50 hover:border-cyan-500/30 transition-colors';
-                    pathEl.innerHTML = `
-                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                            <span class="text-green-400 font-bold text-sm">${index + 1}</span>
-                        </div>
-                        <div class="flex-1">
-                            <p class="text-zinc-200 text-sm font-medium">${path}</p>
-                        </div>
-                    `;
+                    pathEl.className = 'p-4 bg-zinc-950/50 rounded-xl border border-zinc-800/50 hover:border-cyan-500/30 transition-colors';
+                    // Path is now HTML from backend, render it directly
+                    pathEl.innerHTML = path;
                     pathsContainer.appendChild(pathEl);
                 });
             }

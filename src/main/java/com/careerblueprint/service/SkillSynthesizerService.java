@@ -793,148 +793,150 @@ public class SkillSynthesizerService {
         String skill2 = skills.size() > 1 ? skills.get(1) : "";
         String skill3 = skills.size() > 2 ? skills.get(2) : "";
         
-        // CAREER BLUEPRINT TONE: Raw, firm, no basa-basi, straight to problem & solution
-        desc.append("Lo punya kombinasi ").append(skill1);
+        // NEW TONE: Wise mentor, calm but honest, Lo/Gue like chatting at coffee shop
+        desc.append("<p>Gue liat lo punya kombinasi <b>").append(skill1).append("</b>");
         if (!skill2.isEmpty()) {
-            desc.append(" + ").append(skill2);
+            desc.append(" + <b>").append(skill2).append("</b>");
         }
         if (!skill3.isEmpty()) {
-            desc.append(" + ").append(skill3);
+            desc.append(" + <b>").append(skill3).append("</b>");
         }
-        desc.append(". ");
+        desc.append(".</p>");
         
-        // Problem identification - what most people do wrong
-        desc.append("Masalahnya? Kebanyakan orang cuma jualan skill satu-satu. Lo beda. ");
+        // The unique job title from intersection
+        String uniqueJobTitle = generateUniqueJobTitle(categories, skill1, skill2);
+        desc.append("<br><p>Ini bikin lo cocok jadi <b>").append(uniqueJobTitle).append("</b>. ");
+        desc.append("Gak banyak orang di posisi ini, jadi peluang lo gede.</p>");
         
-        // The intersection value proposition
-        desc.append(generateIntersectionValue(categories, skill1, skill2));
+        // Calm explanation of value
+        desc.append("<br>").append(generateCalmIntersectionExplanation(categories, skill1, skill2));
         
-        // 90-DAY BLUEPRINT SECTION
-        desc.append("\n\n📋 **BLUEPRINT 90 HARI - DARI SKILL KE CASH**\n\n");
-        desc.append(generate90DayBlueprint(categories, skills));
+        // 90-DAY ROADMAP SECTION - HTML formatted
+        desc.append("<br><br><p><b>📋 ROADMAP 90 HARI - LANGKAH DEMI LANGKAH</b></p>");
+        desc.append(generate90DayRoadmapHTML(categories, skills));
         
-        // The hard truth - no empty motivation
-        desc.append("\n\n⚠️ **Realita yang Harus Lo Terima**: ");
-        desc.append("Skill gak bisa dimakan. Karya bisa. Portfolio lo harus speak louder than resume. ");
-        desc.append("90 hari ke depan bakal keras. Tapi lebih baik keras 90 hari daripada stuck 10 tahun jadi figuran.");
+        // Closing - calm reassurance
+        desc.append("<br><br><p><b>🎯 Yang Perlu Lo Ingat:</b></p>");
+        desc.append("<p>Jalan ini udah jelas. Gak perlu buru-buru, yang penting konsisten. ");
+        desc.append("90 hari ke depan, fokus aja sama satu langkah tiap minggu. ");
+        desc.append("Nanti hasilnya bakal keliatan sendiri.</p>");
         
         return desc.toString();
     }
     
-    private String generateIntersectionValue(List<SkillCategory> categories, String skill1, String skill2) {
-        StringBuilder value = new StringBuilder();
-        
+    private String generateUniqueJobTitle(List<SkillCategory> categories, String skill1, String skill2) {
+        // Return specific unique job titles based on skill intersection
         if (categories.contains(SkillCategory.WRITING) && categories.contains(SkillCategory.TECHNICAL)) {
-            value.append("Lo bisa nerjemahin bahasa mesin jadi bahasa manusia. Di era AI, yang dibutuhin bukan yang paling teknis, tapi yang paling bisa menjelaskan. Lo = penjembat. ");
+            return "Penjelas Teknologi";
         } else if (categories.contains(SkillCategory.VISUAL) && categories.contains(SkillCategory.TECHNICAL)) {
-            value.append("Lo bikin kode yang cantik, bukan cuma yang jalan. User gak peduli backend lo pake apa. Yang mereka liat? Visual. Lo ngerti dua-duanya. ");
+            return "Perancang Tampilan Digital";
         } else if (categories.contains(SkillCategory.ANALYTICAL) && categories.contains(SkillCategory.MANAGEMENT)) {
-            value.append("Lo ngambil keputusan pake data, bukan feeling. Perusahaan butuh orang kayak lo yang bisa jelasin 'kenapa' sebelum 'apa yang harus dilakukan'. ");
+            return "Pengambil Keputusan Berbasis Data";
         } else if (categories.contains(SkillCategory.INTERPERSONAL) && categories.contains(SkillCategory.SALES)) {
-            value.append("Lo jualan pake relasi, bukan spamming. Kepercayaan itu currency. Lo kaya dalam currency yang paling berharga. ");
+            return "Pembangun Relasi Bisnis";
         } else if (categories.contains(SkillCategory.TEACHING) && categories.contains(SkillCategory.TECHNICAL)) {
-            value.append("Lo bisa bikin yang rumit jadi simpel. Skill teknis yang gak bisa diajarin itu skill yang terbatas valu-nya. Lo unlimited. ");
+            return "Pengajar Teknologi";
+        } else if (categories.contains(SkillCategory.COOKING) && categories.contains(SkillCategory.MANAGEMENT)) {
+            return "Pengelola Usaha Kuliner";
+        } else if (categories.contains(SkillCategory.VISUAL) && categories.contains(SkillCategory.MARKETING)) {
+            return "Perancang Promosi Visual";
+        } else if (categories.contains(SkillCategory.WRITING) && categories.contains(SkillCategory.MARKETING)) {
+            return "Penulis Konten Pemasaran";
+        } else if (categories.contains(SkillCategory.ANALYTICAL) && categories.contains(SkillCategory.FINANCE)) {
+            return "Analis Keuangan";
+        } else if (categories.contains(SkillCategory.INTERPERSONAL) && categories.contains(SkillCategory.TEACHING)) {
+            return "Fasilitator Pembelajaran";
+        } else if (!skill2.isEmpty()) {
+            return "Spesialis " + skill1 + " & " + skill2;
         } else {
-            value.append("Intersection lo itu rare. Kebanyakan orang jago satu hal. Lo jago di persimpangan. ");
+            return "Spesialis " + skill1;
         }
-        
-        // Add specific intersection example
-        value.append("Contoh real: ");
-        
-        if (skill2.isEmpty()) {
-            value.append("Banyak yang bisa ").append(skill1).append(". Tapi yang bisa kombinasiin sama skill lain dan deliver end-to-end solution? Langka. Lo langka.");
-        } else {
-            value.append("Banyak yang bisa ").append(skill1).append(". Banyak juga yang bisa ").append(skill2)
-                 .append(". Tapi yang bisa kombinasiin keduanya jadi solusi utuh? Lo.");
-        }
-        
-        return value.toString();
     }
     
-    private String generate90DayBlueprint(List<SkillCategory> categories, List<String> skills) {
-        StringBuilder blueprint = new StringBuilder();
+    private String generateCalmIntersectionExplanation(List<SkillCategory> categories, String skill1, String skill2) {
+        StringBuilder explanation = new StringBuilder();
         
-        // WEEK 1-4: DEEP SKILL (Teknis yang harus dipelajari)
-        blueprint.append("**MINGGU 1-4: DEEP SKILL (Teknis)\n**");
-        blueprint.append(generateDeepSkillTasks(categories, skills));
+        explanation.append("<p>Gini, kebanyakan orang cuma punya satu skill. ");
+        explanation.append("Mereka bisa ").append(skill1).append(" doang, atau cuma bisa ");
+        explanation.append(skill2.isEmpty() ? "hal lain" : skill2).append(". ");
+        explanation.append("Tapi lo beda. Lo bisa kombinasiin.</p>");
         
-        // WEEK 5-8: PROJECT/PORTFOLIO (Apa yang harus dibangun)
-        blueprint.append("\n**MINGGU 5-8: PROOF OF WORK (Portfolio)\n**");
-        blueprint.append(generatePortfolioTasks(categories, skills));
+        explanation.append("<br><p>");
+        if (categories.contains(SkillCategory.WRITING) && categories.contains(SkillCategory.TECHNICAL)) {
+            explanation.append("Lo bisa nerjemahin yang rumit jadi yang gampang dipahami. ");
+            explanation.append("Di zaman sekarang, yang dibutuhin bukan orang paling pinter coding, ");
+            explanation.append("tapi yang paling bisa jelasin ke orang awam.");
+        } else if (categories.contains(SkillCategory.VISUAL) && categories.contains(SkillCategory.TECHNICAL)) {
+            explanation.append("Lo bisa bikin aplikasi yang gak cuma jalan, tapi juga enak dilihat. ");
+            explanation.append("User gak peduli kode lo kayak gimana, yang mereka liat adalah tampilannya.");
+        } else if (categories.contains(SkillCategory.ANALYTICAL) && categories.contains(SkillCategory.MANAGEMENT)) {
+            explanation.append("Lo bisa bantu orang ngambil keputusan pakai data, bukan cuma feeling. ");
+            explanation.append("Perusahaan butuh orang yang bisa jelasin 'kenapa' sebelum 'apa yang harus dilakukan'.");
+        } else if (categories.contains(SkillCategory.INTERPERSONAL) && categories.contains(SkillCategory.SALES)) {
+            explanation.append("Lo bisa jualan tanpa bikin orang ilfeel. Kepercayaan itu penting, ");
+            explanation.append("dan lo punya kemampuan buat bangun kepercayaan itu.");
+        } else if (categories.contains(SkillCategory.TEACHING) && categories.contains(SkillCategory.TECHNICAL)) {
+            explanation.append("Lo bisa ajarin orang tentang teknologi dengan cara yang gak bikin pusing. ");
+            explanation.append("Skill teknis yang gak bisa diajarin itu nilainya terbatas. Lo gak terbatas.");
+        } else if (categories.contains(SkillCategory.COOKING) && categories.contains(SkillCategory.MANAGEMENT)) {
+            explanation.append("Lo bisa masak, tapi juga bisa ngatur biaya dan operasional. ");
+            explanation.append("Kombinasi ini langka - kebanyakan chef cuma jago masak, tapi gak ngerti bisnis.");
+        } else {
+            explanation.append("Kombinasi skill lo ini jarang. Kebanyakan orang fokus satu hal, ");
+            explanation.append("tapi lo bisa ngerjain sesuatu dari ujung ke ujung.");
+        }
+        explanation.append("</p>");
         
-        // WEEK 9-12: MARKETIZATION (Bagaimana cara menjualnya)
-        blueprint.append("\n**MINGGU 9-12: MARKETIZATION (Jualan)\n**");
-        blueprint.append(generateMarketizationTasks(categories, skills));
-        
-        return blueprint.toString();
+        return explanation.toString();
     }
     
-    private String generateDeepSkillTasks(List<SkillCategory> categories, List<String> skills) {
-        StringBuilder tasks = new StringBuilder();
+    private String generate90DayRoadmapHTML(List<SkillCategory> categories, List<String> skills) {
+        StringBuilder roadmap = new StringBuilder();
         
-        tasks.append("• Identifikasi gap antara skill lo sekarang vs skill yang dibutuhkan market\n");
+        roadmap.append("<br><p><b>BULAN 1: PERKUAT FONDASI</b></p>");
+        roadmap.append("<ul style='margin-left: 20px; margin-top: 8px;'>");
+        roadmap.append("<li style='margin-bottom: 6px;'>Pelajari gap antara skill lo sekarang sama yang dibutuhin pasar</li>");
         
         if (categories.contains(SkillCategory.TECHNICAL)) {
-            tasks.append("• Pelajari 1 framework/tool yang lagi hot di industri (bukan yang lo udah nyaman)\n");
-            tasks.append("• Buat 1 project kecil pake stack baru, deploy ke public\n");
+            roadmap.append("<li style='margin-bottom: 6px;'>Praktik 1 teknik baru yang lagi dibutuhin</li>");
+            roadmap.append("<li style='margin-bottom: 6px;'>Bikin 1 contoh kecil yang bisa ditunjukin ke orang</li>");
         } else if (categories.contains(SkillCategory.WRITING)) {
-            tasks.append("• Bedah 10 copywriting portfolio terbaik di niche lo. Catat pattern-nya.\n");
-            tasks.append("• Tulis 1 long-form piece (2000+ kata) yang showcase depth lo\n");
+            roadmap.append("<li style='margin-bottom: 6px;'>Pelajari gaya tulisan yang paling cocok buat target lo</li>");
+            roadmap.append("<li style='margin-bottom: 6px;'>Tulis 1 karya panjang yang nunjukin kemampuan lo</li>");
         } else if (categories.contains(SkillCategory.VISUAL)) {
-            tasks.append("• Recreate 3 design dari brand yang lo suka. Bedah kenapa itu works.\n");
-            tasks.append("• Pelajari 1 design tool baru atau fitur advanced dari tool yang udah lo pake\n");
+            roadmap.append("<li style='margin-bottom: 6px;'>Pelajari 1 teknik desain yang lo belum kuasai</li>");
+            roadmap.append("<li style='margin-bottom: 6px;'>Recreate 3 karya inspiratif, bedah tekniknya</li>");
         } else {
-            tasks.append("• Bedah 5 case study dari expert di bidang lo. Catat pattern yang repeatable.\n");
-            tasks.append("• Latih skill utama lo 90 menit per hari selama 30 hari. No excuses.\n");
+            roadmap.append("<li style='margin-bottom: 6px;'>Pelajari dari 5 contoh sukses di bidang lo</li>");
+            roadmap.append("<li style='margin-bottom: 6px;'>Latih skill utama tiap hari, minimal 1 jam</li>");
         }
+        roadmap.append("</ul>");
         
-        tasks.append("• **Target akhir Minggu 4**: Lo harus bisa deliver 1 hasil yang lebih baik dari 80% orang di market.");
-        
-        return tasks.toString();
-    }
-    
-    private String generatePortfolioTasks(List<SkillCategory> categories, List<String> skills) {
-        StringBuilder tasks = new StringBuilder();
-        
-        tasks.append("• Bangun 1 project end-to-end yang nunjukkin intersection skill lo\n");
+        roadmap.append("<br><p><b>BULAN 2: BIKIN BUKTI</b></p>");
+        roadmap.append("<ul style='margin-left: 20px; margin-top: 8px;'>");
+        roadmap.append("<li style='margin-bottom: 6px;'>Bikin 1 hasil nyata yang nunjukin kombinasi skill lo</li>");
         
         if (categories.contains(SkillCategory.TECHNICAL) && categories.contains(SkillCategory.WRITING)) {
-            tasks.append("• Buat technical blog + dokumentasi project yang lo kerjain\n");
-            tasks.append("• Case study: 'How I built X and documented it for others'\n");
+            roadmap.append("<li style='margin-bottom: 6px;'>Dokumentasiin project lo dengan penjelasan yang gampang dipahami</li>");
         } else if (categories.contains(SkillCategory.VISUAL) && categories.contains(SkillCategory.MARKETING)) {
-            tasks.append("• Buat 1 campaign lengkap dari research sampe visual execution\n");
-            tasks.append("• Dokumentasi before-after metrics (meskipun dummy project)\n");
+            roadmap.append("<li style='margin-bottom: 6px;'>Bikin contoh kampanye lengkap dari ide sampe hasil</li>");
         } else if (categories.contains(SkillCategory.ANALYTICAL)) {
-            tasks.append("• Analisis 1 dataset public, publish insight-nya di blog/sosmed\n");
-            tasks.append("• Dashboard/visualisasi yang bisa diakses publik\n");
+            roadmap.append("<li style='margin-bottom: 6px;'>Analisa 1 kasus nyata dan publish hasilnya</li>");
         } else {
-            tasks.append("• Buat 1 portfolio piece yang solve real problem (meskipun lo solve-in buat diri lo sendiri)\n");
-            tasks.append("• Process documentation: tunjukkin cara kerja lo, bukan cuma hasil akhir\n");
+            roadmap.append("<li style='margin-bottom: 6px;'>Bikin 1 portfolio piece yang solve masalah nyata</li>");
+            roadmap.append("<li style='margin-bottom: 6px;'>Dokumentasiin proses kerja lo, gak cuma hasil akhir</li>");
         }
+        roadmap.append("</ul>");
         
-        tasks.append("• **Target akhir Minggu 8**: Portfolio lo harus bisa convince orang bayar lo meskipun lo gak punya pengalaman kerja formal.");
+        roadmap.append("<br><p><b>BULAN 3: KENALIN KE PASAR</b></p>");
+        roadmap.append("<ul style='margin-left: 20px; margin-top: 8px;'>");
+        roadmap.append("<li style='margin-bottom: 6px;'>Cari 3 orang atau perusahaan yang paling butuh skill lo</li>");
+        roadmap.append("<li style='margin-bottom: 6px;'>Siapin penawaran yang highlight keunggulan kombinasi skill lo</li>");
+        roadmap.append("<li style='margin-bottom: 6px;'>Hubungi minimal 10 calon klien atau apply 15 posisi</li>");
+        roadmap.append("<li style='margin-bottom: 6px;'>Dapetin 1 feedback positif atau 1 kesempatan ngobrol lebih lanjut</li>");
+        roadmap.append("</ul>");
         
-        return tasks.toString();
-    }
-    
-    private String generateMarketizationTasks(List<SkillCategory> categories, List<String> skills) {
-        StringBuilder tasks = new StringBuilder();
-        
-        tasks.append("• Identifikasi 3 target customer/employer yang paling butuh kombinasi skill lo\n");
-        tasks.append("• Craft 1 pitch yang highlight intersection value, bukan skill individual\n");
-        
-        if (categories.contains(SkillCategory.SALES) || categories.contains(SkillCategory.MARKETING)) {
-            tasks.append("• Reach out ke 10 prospects dengan personalized message (bukan template)\n");
-            tasks.append("• Close 1 deal - meskipun kecil. Proof of transaction lebih penting dari proof of concept.\n");
-        } else {
-            tasks.append("• Apply ke 20 posisi atau kirim proposal ke 10 klien potensial\n");
-            tasks.append("• Follow up sampe dapet 1 response (yes or no gak penting, yang penting response)\n");
-        }
-        
-        tasks.append("• Update semua profil professional lo (LinkedIn, portfolio, bio) dengan bahasa 'pemberi solusi', bukan 'cari kerja'\n");
-        tasks.append("• **Target akhir Minggu 12**: Lo harus punya 1 testimonial/feedback positif, atau minimal 1 interview/call dengan prospect.");
-        
-        return tasks.toString();
+        return roadmap.toString();
     }
 
     private String generateRealWorldExample(List<String> skills, List<SkillCategory> categories) {
@@ -942,23 +944,23 @@ public class SkillSynthesizerService {
         
         // Generate specific example based on skill combination
         if (categories.contains(SkillCategory.WRITING) && categories.contains(SkillCategory.TECHNICAL)) {
-            example.append("Sebagai Technical Writer di startup fintech, kamu tidak sekadar mendokumentasikan API, tapi membuat onboarding experience yang mengurangi support ticket 40% dan meningkatkan developer adoption 3x lebih cepat.");
+            example.append("Sebagai Penjelas Teknologi di startup fintech, kamu tidak sekadar mendokumentasikan, tapi membuat penjelasan yang mengurangi pertanyaan teknis 40% dan membantu tim lebih cepat bekerja.");
         } else if (categories.contains(SkillCategory.VISUAL) && categories.contains(SkillCategory.MARKETING)) {
-            example.append("Kamu membuat campaign visual untuk brand lokal yang viral di TikTok, menghasilkan 2M views organik dan meningkatkan penjualan 300% dalam satu bulan tanpa paid ads.");
+            example.append("Kamu membuat promosi visual untuk brand lokal yang menarik perhatian, menghasilkan banyak interaksi dan meningkatkan penjualan tanpa biaya iklan besar.");
         } else if (categories.contains(SkillCategory.ANALYTICAL) && categories.contains(SkillCategory.MANAGEMENT)) {
-            example.append("Kamu mengidentifikasi ineffisiensi supply chain menggunakan data analysis, menghemat biaya operasional 25% (Rp 500jt/tahun) untuk perusahaan manufaktur menengah.");
+            example.append("Kamu membantu perusahaan menemukan cara kerja yang lebih efisien menggunakan data, menghemat biaya operasional hingga 25% setiap tahunnya.");
         } else if (categories.contains(SkillCategory.CODING) || categories.contains(SkillCategory.TECHNICAL) && categories.contains(SkillCategory.TEACHING)) {
-            example.append("Kamu membuat course online programming yang membantu 1000+ orang career switch ke tech, dengan rating 4.9/5 dan testimoni alumni yang bekerja di Google, Tokopedia, dan unicorn lainnya.");
+            example.append("Kamu membuat materi pembelajaran teknologi yang membantu ratusan orang beralih karir ke bidang tech, dengan testimoni positif dari alumni.");
         } else if (categories.contains(SkillCategory.INTERPERSONAL) && categories.contains(SkillCategory.SALES)) {
-            example.append("Kamu membangun portofolio klien enterprise dari nol, menggunakan consultative selling approach yang membuat retention rate 90% dan average deal size 3x lebih besar dari tim lain.");
+            example.append("Kamu membangun hubungan dengan klien secara personal, membuat mereka tetap setia dan transaksi jadi lebih besar dari biasanya.");
         } else if (categories.contains(SkillCategory.COOKING) && categories.contains(SkillCategory.MANAGEMENT)) {
-            example.append("Kamu merancang sistem cloud kitchen untuk 5 brand virtual, menggunakan process optimization dan menu engineering, menghasilkan profit margin 35% (industry average hanya 15%).");
+            example.append("Kamu mengelola beberapa brand kuliner sekaligus, mengatur menu dan biaya dengan baik, menghasilkan keuntungan di atas rata-rata industri.");
         } else {
-            example.append("Sebagai solopreneur, kamu menggabungkan ").append(skills.get(0));
+            example.append("Sebagai kombinasi ").append(skills.get(0));
             if (skills.size() > 1) {
-                example.append(" dengan ").append(skills.get(1));
+                example.append(" dan ").append(skills.get(1));
             }
-            example.append(" untuk membantu UMKM scale up, satu klien kamu berhasil naik dari omzet 10jt/bulan jadi 100jt/bulan dalam 6 bulan.");
+            example.append(" kamu membantu bisnis lokal berkembang, salah satu klien berhasil naik dari omzet 10jt/bulan jadi 100jt/bulan dalam 6 bulan.");
         }
         
         return example.toString();
@@ -978,48 +980,116 @@ public class SkillSynthesizerService {
     private List<String> generatePersonalizedMonetization(List<SkillCategory> categories, List<String> skills) {
         List<String> paths = new ArrayList<>();
         
-        // CAREER BLUEPRINT MONETIZATION: Realistic, raw, no get-rich-quick promises
-        String skillCombo = skills.size() > 1 ? skills.get(0) + "+" + skills.get(1) : skills.get(0);
+        // NEW MONETIZATION: Diversified, practical, not just freelance/product/remote
         
-        // Path 1: Immediate Cash (Freelance/Service) - Start here!
-        paths.add("💰 **CEPAT: Freelance " + skillCombo + " (Minggu 1-4 bisa mulai)**\n" +
-                "Rate awal: $10-30/jam atau project-based 1-5jt. Target: 1 klien pertama dalam 30 hari. " +
-                "Jangan pilih-pilih klien awal, yang penting cash flow dan testimonial.");
+        // Path 1: Quick Start - Service-based (can start immediately)
+        paths.add(generateQuickStartPath(categories, skills.get(0)));
         
-        // Path 2: Scalable Income (Product/Retainer) - Build this
-        if (categories.contains(SkillCategory.TECHNICAL) || categories.contains(SkillCategory.CODING)) {
-            paths.add("🏗️ **SCALE: Digital Product/Tool (Minggu 8-12 mulai build)**\n" +
-                    "Template, plugin, atau micro-SaaS. Butuh waktu 3-6 bulan sampe revenue stabil. " +
-                    "Target: $500-2K/bulan dalam 6 bulan. Pasif tapi gak instant.");
-        } else if (categories.contains(SkillCategory.TEACHING) || categories.contains(SkillCategory.WRITING)) {
-            paths.add("🏗️ **SCALE: Course/Ebook (Minggu 8-12 mulai record/write)**\n" +
-                    "Launch pertama target 10-50 student. Revenue: 5-50jt per launch. " +
-                    "Butuh audience dulu (build 90 hari), baru bisa monetize.");
-        } else if (categories.contains(SkillCategory.VISUAL) || categories.contains(SkillCategory.DESIGN)) {
-            paths.add("🏗️ **SCALE: Asset Digital/Template (Upload & forget)**\n" +
-                    "Marketplace: Creative Market, Envato, Canva. Royalti: 2-20jt/bulan setelah 3-6 bulan. " +
-                    "Butuh volume 20+ assets sampe revenue konsisten.");
-        } else {
-            paths.add("🏗️ **SCALE: Retainer Client (Stabil tapi bounded)**\n" +
-                    "Kontrak 3-6 bulan, bayaran 5-30jt/bulan. Predictable income tapi waktu lo terjual. " +
-                    "Ideal buat sustainable sambil build product.");
-        }
+        // Path 2: Medium-term - Local/Physical/Workshop based
+        paths.add(generateMediumTermPath(categories, skills));
         
-        // Path 3: Career Path (Employment vs Entrepreneurship)
-        if (categories.contains(SkillCategory.MANAGEMENT) || categories.contains(SkillCategory.ANALYTICAL)) {
-            paths.add("🎯 **CAREER: Senior/Lead Role (Apply setelah portfolio ready)**\n" +
-                    "Target gaji: 15-40jt/bulan tergantung industri. Equity? Jarang kecuali startup early. " +
-                    "Portfolio + case study = leverage negosiasi gaji lebih tinggi.");
-        } else if (categories.contains(SkillCategory.SALES) || categories.contains(SkillCategory.MARKETING)) {
-            paths.add("🎯 **CAREER: Performance-Based Role (Revenue share)**\n" +
-                    "Gaji base kecil (5-10jt) tapi komisi 10-30% dari deals. High risk, high reward. " +
-                    "Cocok buat yang jago jualan dan punya network.");
-        } else {
-            paths.add("🎯 **CAREER: Remote Global (Bulan 3-6 mulai apply)**\n" +
-                    "Gaji USD 15K-60K/year. Butuh portfolio solid + English decent. " +
-                    "Kompetisi keras, tapi bayaran 3-5x lipat dari lokal.");
-        }
+        // Path 3: Long-term - Career/Employment path
+        paths.add(generateLongTermPath(categories, skills.get(0)));
         
         return paths;
+    }
+    
+    private String generateQuickStartPath(List<SkillCategory> categories, String primarySkill) {
+        StringBuilder path = new StringBuilder();
+        path.append("<p><b>💰 Langkah Pertama - Mulai Dari Sekarang</b></p>");
+        
+        if (categories.contains(SkillCategory.COOKING)) {
+            path.append("<p>Bikin 10 porsi masakan lo, jual ke tetangga atau teman kantor. ");
+            path.append("Modal kecil, balik modal cepet. Harga 25-50rb/porsi. ");
+            path.append("Target: 10 pelanggan pertama dalam 2 minggu.</p>");
+        } else if (categories.contains(SkillCategory.TEACHING)) {
+            path.append("<p>Tawarin les privat ke 5 orang di sekitar lo. ");
+            path.append("Bisa online atau tatap muka. Tarif 50-150rb/jam. ");
+            path.append("Mulai dari yang lo udah kuasai banget.</p>");
+        } else if (categories.contains(SkillCategory.VISUAL) || categories.contains(SkillCategory.DESIGN)) {
+            path.append("<p>Bikin desain untuk 3 orang yang lo kenal (logo, poster, dll). ");
+            path.append("Gratis atau murah aja buat dapet portfolio dan testimoni. ");
+            path.append("Abis itu barulah charge 300rb-1jt per project.</p>");
+        } else if (categories.contains(SkillCategory.WRITING)) {
+            path.append("<p>Tulis 3 artikel gratis untuk blog orang, buat dapet pengalaman. ");
+            path.append("Abis itu apply jadi penulis lepas, bayaran 100-500rb per artikel. ");
+            path.append("Atau bikin copywriting untuk UMKM sekitar.</p>");
+        } else if (categories.contains(SkillCategory.TECHNICAL) || categories.contains(SkillCategory.CODING)) {
+            path.append("<p>Bikin 1 website/aplikasi kecil untuk teman atau bisnis lokal. ");
+            path.append("Charge 500rb-2jt (tergantung susahnya). ");
+            path.append("Ini buat dapet pengalaman dan portfolio.</p>");
+        } else {
+            path.append("<p>Tawarin jasa ").append(primarySkill).append(" ke 10 orang yang lo kenal. ");
+            path.append("Bisa gratis dulu atau murah buat dapet testimoni. ");
+            path.append("Abis itu naikin harga sedikit demi sedikit.</p>");
+        }
+        
+        return path.toString();
+    }
+    
+    private String generateMediumTermPath(List<SkillCategory> categories, List<String> skills) {
+        StringBuilder path = new StringBuilder();
+        path.append("<br><p><b>🏗️ Langkah Kedua - Besarin Usaha</b></p>");
+        
+        if (categories.contains(SkillCategory.COOKING)) {
+            path.append("<p>Buka catering harian atau katering acara kecil-kecilan. ");
+            path.append("Target: 20-50 porsi per hari. Omzet 5-15jt/bulan. ");
+            path.append("Atau bikin kelas masak privat 5-10 orang, tarif 200-500rb/orang.</p>");
+        } else if (categories.contains(SkillCategory.TEACHING) && categories.contains(SkillCategory.TECHNICAL)) {
+            path.append("<p>Bikin workshop weekend 2 hari di kota lo. ");
+            path.append("Isi 10-15 peserta, tarif 500rb-1jt per orang. ");
+            path.append("Atu pelajaran online via Zoom/Meet, 5-10 murid per kelas.</p>");
+        } else if (categories.contains(SkillCategory.INTERPERSONAL) && categories.contains(SkillCategory.SALES)) {
+            path.append("<p>Jadi agen atau reseller produk yang lo percaya. ");
+            path.append("Komisi 10-30% per penjualan. ");
+            path.append("Fokus ke produk yang solusiin masalah orang sekitar lo.</p>");
+        } else if (categories.contains(SkillCategory.VISUAL) && categories.contains(SkillCategory.MARKETING)) {
+            path.append("<p>Buka jasa desain untuk UMKM di sekitar (spanduk, menu, brosur). ");
+            path.append("Kerjasama dengan percetakan local. ");
+            path.append("Charge 500rb-3jt per project tergantung kompleksitas.</p>");
+        } else if (categories.contains(SkillCategory.MANAGEMENT) || categories.contains(SkillCategory.OPERATIONS)) {
+            path.append("<p>Tawarin jasa konsultan kecil-kecilan buat bisnis teman. ");
+            path.append("Bantu atur operasional atau sistem kerja. ");
+            path.append("Fee 1-5jt per project, tergantung besar bisnisnya.</p>");
+        } else {
+            path.append("<p>Kembangin jasa lo jadi paket yang lebih lengkap. ");
+            path.append("Misal: kalo tulis, sekarang offer paket ");
+            path.append("'tulis + publish + promosiin'. Harga lebih tinggi, value lebih gede.</p>");
+        }
+        
+        return path.toString();
+    }
+    
+    private String generateLongTermPath(List<SkillCategory> categories, String primarySkill) {
+        StringBuilder path = new StringBuilder();
+        path.append("<br><p><b>🎯 Langkah Ketiga - Karir Jangka Panjang</b></p>");
+        
+        if (categories.contains(SkillCategory.MANAGEMENT) || categories.contains(SkillCategory.ANALYTICAL)) {
+            path.append("<p>Apply posisi Supervisor atau Manager di perusahaan yang sesuai. ");
+            path.append("Gaji target: 10-25jt/bulan tergantung industri dan kota. ");
+            path.append("Portfoliomu jadi modal negosiasi.</p>");
+        } else if (categories.contains(SkillCategory.TECHNICAL) || categories.contains(SkillCategory.CODING)) {
+            path.append("<p>Bisa apply jadi karyawan tech company (gaji 8-20jt), ");
+            path.append("atau lanjut freelance dengan rate lebih tinggi (3-10jt/project). ");
+            path.append("Pilih yang cocok sama gaya hidup lo.</p>");
+        } else if (categories.contains(SkillCategory.TEACHING)) {
+            path.append("<p>Apply jadi pengajar atau trainer di lembaga formal. ");
+            path.append("Gaji stabil plus bisa tetep freelance. ");
+            path.append("Atau bikin bimbel/les sendiri, lebih flexible.</p>");
+        } else if (categories.contains(SkillCategory.COOKING)) {
+            path.append("<p>Buka warung/food stall sendiri atau jadi chef di restoran. ");
+            path.append("Atau kembangin catering jadi lebih besar. ");
+            path.append("Pendapatan bisa 10-30jt/bulan kalau udah stabil.</p>");
+        } else if (categories.contains(SkillCategory.SALES) || categories.contains(SkillCategory.MARKETING)) {
+            path.append("<p>Jadi Marketing Manager atau Sales Supervisor. ");
+            path.append("Gaji dasar + komisi dari penjualan. ");
+            path.append("Potensi total: 10-30jt/bulan kalau performa bagus.</p>");
+        } else {
+            path.append("<p>Apply posisi yang butuh skill ").append(primarySkill).append(" di perusahaan. ");
+            path.append("Target gaji: 7-15jt/bulan untuk pemula, naik terus seiring pengalaman. ");
+            path.append("Atau kembangin usaha sendiri kalau lo lebih suka freedom.</p>");
+        }
+        
+        return path.toString();
     }
 }
