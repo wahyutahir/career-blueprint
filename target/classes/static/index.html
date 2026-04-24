@@ -213,10 +213,13 @@
                         <input 
                             type="text" 
                             id="skillSearch"
-                            placeholder="Cari skill..."
+                            placeholder="Cari skill atau ketik skill baru (Enter untuk tambah)..."
                             class="w-full bg-zinc-950 border border-zinc-700 rounded-xl pl-12 pr-4 py-3 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500"
                         >
                     </div>
+                    <p class="text-xs text-zinc-500 mt-2">
+                        💡 <span class="text-cyan-400">Tip:</span> Ketik skill apapun (misal: "ceramah", "tebing") lalu tekan Enter untuk menambahkan. Bebas!
+                    </p>
                 </div>
 
                 <!-- Skills List -->
@@ -468,7 +471,28 @@
                 `;
             });
             
-            skillsContainer.innerHTML = html || '<p class="text-center text-zinc-500 py-8">Tidak ada skill yang cocok</p>';
+            // If no skills match, show option to add custom skill
+            if (!html) {
+                const searchValue = document.getElementById('skillSearch').value.trim();
+                if (searchValue) {
+                    skillsContainer.innerHTML = `
+                        <div class="text-center py-8">
+                            <p class="text-zinc-400 mb-4">"${escapeHtml(searchValue)}" tidak ada di database</p>
+                            <button id="addCustomSkillBtn" class="px-4 py-2 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 rounded-lg transition-colors border border-cyan-500/30">
+                                + Tambahkan "${escapeHtml(searchValue)}" sebagai skill
+                            </button>
+                        </div>
+                    `;
+                    // Add event listener to the button
+                    document.getElementById('addCustomSkillBtn').addEventListener('click', () => {
+                        addCustomSkill(searchValue);
+                    });
+                } else {
+                    skillsContainer.innerHTML = '<p class="text-center text-zinc-500 py-8">Ketik nama skill lalu tekan Enter atau klik tombol di atas</p>';
+                }
+            } else {
+                skillsContainer.innerHTML = html;
+            }
             
             // Add event listeners to checkboxes
             skillsContainer.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
@@ -586,6 +610,53 @@
         skillSearch.addEventListener('input', (e) => {
             renderSkillsList(e.target.value);
         });
+
+        // Enter key to add custom skill
+        skillSearch.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const value = skillSearch.value.trim();
+                if (value) {
+                    addCustomSkill(value);
+                }
+            }
+        });
+
+        // Add custom skill function
+        function addCustomSkill(skill) {
+            const trimmedSkill = skill.trim();
+            if (!trimmedSkill) return;
+
+            // Check if already selected
+            if (tempSelectedSkills.includes(trimmedSkill)) {
+                showAlert(`"${trimmedSkill}" sudah ada di daftar`);
+                return;
+            }
+
+            // Check max limit
+            if (tempSelectedSkills.length >= 10) {
+                showAlert('Kamu hanya bisa menambahkan 3-10 skill');
+                return;
+            }
+
+            // Add to temp selection
+            tempSelectedSkills.push(trimmedSkill);
+            updateModalCounter();
+            
+            // Clear search and re-render
+            skillSearch.value = '';
+            renderSkillsList('');
+            
+            // Visual feedback
+            showAlert(`"${trimmedSkill}" ditambahkan!`);
+        }
+
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
 
         // Synthesize button click
         synthesizeBtn.addEventListener('click', async () => {
