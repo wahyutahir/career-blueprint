@@ -1122,32 +1122,32 @@ public class SkillSynthesizerService {
         
         // Masak = DM pemilik warung kopi di dekat rumah
         if (primaryLower.contains("masak") || primaryLower.contains("cooking")) {
-            return "DM pemilik 5 warung kopi di dekat rumah lo dengan script: 'Gue bisa bantu bikin menu baru buat warung lo'");
+            return "DM pemilik 5 warung kopi di dekat rumah lo dengan script: \"Gue bisa bantu bikin menu baru buat warung lo\"";
         }
         
         // Writing = DM pemilik bisnis lokal
         if (primaryLower.contains("tulis") || primaryLower.contains("writing")) {
-            return "DM pemilik 10 bisnis lokal di Instagram dengan script: 'Lo butuh konten buat bisnis lo? Gue bisa bantu'";
+            return "DM pemilik 10 bisnis lokal di Instagram dengan script: \"Lo butuh konten buat bisnis lo? Gue bisa bantu\"";
         }
         
         // Design = DM pemilik UMKM baru
         if (primaryLower.contains("design") || primaryLower.contains("desain") || categories.contains(SkillCategory.VISUAL)) {
-            return "DM pemilik 10 UMKM baru di area lo dengan script: 'Gue bisa bantu bikin logo buat bisnis lo'";
+            return "DM pemilik 10 UMKM baru di area lo dengan script: \"Gue bisa bantu bikin logo buat bisnis lo\"";
         }
         
         // Coding = DM pemilik bisnis yang butuh website
         if (primaryLower.contains("coding") || primaryLower.contains("program") || categories.contains(SkillCategory.TECHNICAL)) {
-            return "DM pemilik 10 bisnis yang gak punya website dengan script: 'Bisnis lo butuh website? Gue bisa bantu bikin'";
+            return "DM pemilik 10 bisnis yang gak punya website dengan script: \"Bisnis lo butuh website? Gue bisa bantu bikin\"";
         }
         
         // Sales = DM pemilik bisnis yang butuh sales
         if (categories.contains(SkillCategory.SALES)) {
-            return "DM pemilik 10 bisnis yang produknya bagus tapi penjualan kurang dengan script: 'Gue bisa bantu naikin penjualan lo'";
+            return "DM pemilik 10 bisnis yang produknya bagus tapi penjualan kurang dengan script: \"Gue bisa bantu naikin penjualan lo\"";
         }
         
         // Teaching = DM orang tua yang punya anak
         if (primaryLower.contains("mengajar") || primaryLower.contains("ngaji") || categories.contains(SkillCategory.TEACHING)) {
-            return "DM 10 orang tua di komplek perumahan dengan script: 'Lo butuh privat ngaji buat anak lo? Gue bisa datang ke rumah'";
+            return "DM 10 orang tua di komplek perumahan dengan script: \"Lo butuh privat ngaji buat anak lo? Gue bisa datang ke rumah\"";
         }
         
         // Default
@@ -1260,7 +1260,7 @@ public class SkillSynthesizerService {
      */
     private String generateHardSlap() {
         String[] slaps = {
-            "Gak ada yang namanya 'gue belum siap'. Lo gak akan pernah siap. Sekarang atau gak sama sekali.",
+            "Gak ada yang namanya \"gue belum siap\". Lo gak akan pernah siap. Sekarang atau gak sama sekali.",
             "90 hari dari sekarang, lo bakal tetap di tempat yang sama kalau lo gak mulai hari ini.",
             "Skill lo udah cukup. Yang kurang adalah nyali buat mulai.",
             "Gak ada yang peduli sama rencana lo. Mereka cuma peduli sama hasil lo.",
