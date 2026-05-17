@@ -1,1 +1,10 @@
+com\careerblueprint\model\DailyMission.class
+com\careerblueprint\model\Identity.class
+com\careerblueprint\SkillSynthesizerApplication.class
+com\careerblueprint\controller\SynthesizerController.class
+com\careerblueprint\service\MissionService.class
+com\careerblueprint\service\SkillSynthesizerService.class
 com\careerblueprint\service\SkillSynthesizerService$1.class
+com\careerblueprint\controller\MissionController.class
+com\careerblueprint\service\GeminiService.class
+com\careerblueprint\enums\SkillCategory.class

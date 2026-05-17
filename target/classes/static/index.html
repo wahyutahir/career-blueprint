@@ -735,48 +735,72 @@
             loadingState.classList.add('hidden');
             resultSection.classList.remove('hidden');
 
-            // Set title
-            document.getElementById('identityTitle').textContent = data.title;
-            
-            // Use HTML directly from backend (already formatted with <p>, <b>, <br>, <ul>)
-            const descriptionEl = document.getElementById('identityDescription');
-            descriptionEl.innerHTML = data.description;
-            
-            // Add styling to bold elements inside description
-            const boldElements = descriptionEl.querySelectorAll('b');
-            boldElements.forEach(el => {
-                el.className = 'text-cyan-300';
-            });
-
-            // Set categories
-            const categoriesContainer = document.getElementById('matchedCategories');
-            categoriesContainer.innerHTML = '';
-            if (data.matchedCategories) {
-                data.matchedCategories.forEach(category => {
-                    const badge = document.createElement('span');
-                    badge.className = 'px-3 py-1 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 rounded-lg text-xs text-cyan-300 font-medium';
-                    badge.textContent = category;
-                    categoriesContainer.appendChild(badge);
-                });
-            }
-
-            // Set monetization paths (HTML from backend)
-            const pathsContainer = document.getElementById('monetizationPaths');
-            pathsContainer.innerHTML = '';
-            if (data.monetizationPaths) {
-                data.monetizationPaths.forEach((path, index) => {
-                    const pathEl = document.createElement('div');
-                    pathEl.className = 'p-4 bg-zinc-950/50 rounded-xl border border-zinc-800/50 hover:border-cyan-500/30 transition-colors';
-                    // Path is now HTML from backend, render it directly
-                    pathEl.innerHTML = path;
-                    pathsContainer.appendChild(pathEl);
-                });
+            // Check if it's a fallback response (static logic)
+            if (data.fallback) {
+                // Use old display logic for fallback
+                document.getElementById('identityTitle').textContent = data.title;
                 
-                // Add styling to bold elements in monetization paths
-                const pathBoldElements = pathsContainer.querySelectorAll('b');
-                pathBoldElements.forEach(el => {
+                const descriptionEl = document.getElementById('identityDescription');
+                descriptionEl.innerHTML = data.description;
+                
+                const boldElements = descriptionEl.querySelectorAll('b');
+                boldElements.forEach(el => {
                     el.className = 'text-cyan-300';
                 });
+
+                const categoriesContainer = document.getElementById('matchedCategories');
+                categoriesContainer.innerHTML = '';
+                if (data.matchedCategories) {
+                    data.matchedCategories.forEach(category => {
+                        const badge = document.createElement('span');
+                        badge.className = 'px-3 py-1 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 rounded-lg text-xs text-cyan-300 font-medium';
+                        badge.textContent = category;
+                        categoriesContainer.appendChild(badge);
+                    });
+                }
+
+                const pathsContainer = document.getElementById('monetizationPaths');
+                pathsContainer.innerHTML = '';
+                if (data.monetizationPaths) {
+                    data.monetizationPaths.forEach((path, index) => {
+                        const pathEl = document.createElement('div');
+                        pathEl.className = 'p-4 bg-zinc-950/50 rounded-xl border border-zinc-800/50 hover:border-cyan-500/30 transition-colors';
+                        pathEl.innerHTML = path;
+                        pathsContainer.appendChild(pathEl);
+                    });
+                    
+                    const pathBoldElements = pathsContainer.querySelectorAll('b');
+                    pathBoldElements.forEach(el => {
+                        el.className = 'text-cyan-300';
+                    });
+                }
+            } else {
+                // New Gemini AI response format
+                try {
+                    // Parse the JSON analysis from Gemini
+                    const analysis = JSON.parse(data.analysis);
+                    
+                    // Set title from identitas_unik
+                    document.getElementById('identityTitle').textContent = analysis.identitas_unik;
+                    
+                    // Build description from kenapa_langka and jalur_monetisasi
+                    const descriptionEl = document.getElementById('identityDescription');
+                    descriptionEl.innerHTML = `
+                        <p class="text-zinc-300 mb-4">${analysis.kenapa_langka}</p>
+                        <p class="text-zinc-300">${analysis.jalur_monetisasi}</p>
+                    `;
+                    
+                    // Hide categories and monetization paths sections for AI response
+                    document.getElementById('matchedCategories').innerHTML = '';
+                    document.getElementById('monetizationPaths').innerHTML = '';
+                } catch (e) {
+                    console.error('Failed to parse AI response:', e);
+                    // If parsing fails, display raw analysis
+                    document.getElementById('identityTitle').textContent = 'Identitas Karir Unik';
+                    document.getElementById('identityDescription').innerHTML = `<p class="text-zinc-300">${data.analysis}</p>`;
+                    document.getElementById('matchedCategories').innerHTML = '';
+                    document.getElementById('monetizationPaths').innerHTML = '';
+                }
             }
 
             // Scroll to result
