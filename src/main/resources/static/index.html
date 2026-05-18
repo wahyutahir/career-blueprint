@@ -732,11 +732,16 @@
         });
 
         function displayResult(data) {
+            console.log("=== FRONTEND DISPLAY RESULT START ===");
+            console.log("Data received:", data);
+            console.log("Is fallback:", data.fallback);
+            
             loadingState.classList.add('hidden');
             resultSection.classList.remove('hidden');
 
             // Check if it's a fallback response (static logic)
             if (data.fallback) {
+                console.log("Using fallback static logic");
                 // Use old display logic for fallback
                 document.getElementById('identityTitle').textContent = data.title;
                 
@@ -775,13 +780,17 @@
                     });
                 }
             } else {
+                console.log("Using Gemini AI response");
+                console.log("Analysis string:", data.analysis);
                 // New Gemini AI response format
                 try {
                     // Parse the JSON analysis from Gemini
                     const analysis = JSON.parse(data.analysis);
+                    console.log("Parsed analysis:", analysis);
                     
                     // Set title from identitas_unik
                     document.getElementById('identityTitle').textContent = analysis.identitas_unik;
+                    console.log("Set title:", analysis.identitas_unik);
                     
                     // Build description from kenapa_langka and jalur_monetisasi
                     const descriptionEl = document.getElementById('identityDescription');
@@ -789,12 +798,14 @@
                         <p class="text-zinc-300 mb-4">${analysis.kenapa_langka}</p>
                         <p class="text-zinc-300">${analysis.jalur_monetisasi}</p>
                     `;
+                    console.log("Set description");
                     
                     // Hide categories and monetization paths sections for AI response
                     document.getElementById('matchedCategories').innerHTML = '';
                     document.getElementById('monetizationPaths').innerHTML = '';
                 } catch (e) {
                     console.error('Failed to parse AI response:', e);
+                    console.error('Analysis string that failed to parse:', data.analysis);
                     // If parsing fails, display raw analysis
                     document.getElementById('identityTitle').textContent = 'Identitas Karir Unik';
                     document.getElementById('identityDescription').innerHTML = `<p class="text-zinc-300">${data.analysis}</p>`;
@@ -803,6 +814,7 @@
                 }
             }
 
+            console.log("=== FRONTEND DISPLAY RESULT END ===");
             // Scroll to result
             resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
