@@ -16,7 +16,30 @@ public class GeminiService {
     private final String apiKey;
 
     public GeminiService(@Value("${GEMINI_API_KEY}") String apiKey) {
-        this.apiKey = apiKey;
+        // Try to read from Spring @Value first, then fallback to system environment variable
+        String envApiKey = System.getenv("GEMINI_API_KEY");
+        
+        System.out.println("=== GEMINI SERVICE INITIALIZATION ===");
+        System.out.println("API Key from @Value: " + (apiKey != null && !apiKey.isEmpty() ? "PRESENT" : "NULL/EMPTY"));
+        System.out.println("API Key from System.getenv(): " + (envApiKey != null && !envApiKey.isEmpty() ? "PRESENT" : "NULL/EMPTY"));
+        
+        // Use environment variable if @Value is null/empty
+        if (apiKey == null || apiKey.isEmpty()) {
+            if (envApiKey != null && !envApiKey.isEmpty()) {
+                this.apiKey = envApiKey;
+                System.out.println("Using API Key from System.getenv()");
+            } else {
+                this.apiKey = "";
+                System.out.println("ERROR: No API Key found from any source!");
+            }
+        } else {
+            this.apiKey = apiKey;
+            System.out.println("Using API Key from @Value annotation");
+        }
+        
+        System.out.println("Final API Key status: " + (this.apiKey != null && !this.apiKey.isEmpty() ? "SET" : "NOT SET"));
+        System.out.println("=== GEMINI SERVICE INITIALIZATION END ===");
+        
         this.client = new OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(60, TimeUnit.SECONDS)
