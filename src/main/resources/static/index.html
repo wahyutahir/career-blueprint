@@ -679,6 +679,8 @@
 
         // Synthesize button click
         synthesizeBtn.addEventListener('click', async () => {
+            console.log("=== BUTTON CLICKED - MEMICU FETCH KE BACKEND ===");
+            
             if (selectedSkills.length < 3 || selectedSkills.length > 10) {
                 showAlert('Kamu hanya bisa menambahkan 3-10 skill');
                 return;
@@ -686,6 +688,8 @@
 
             // Get nickname
             const nickname = nicknameInput.value.trim() || 'Lo';
+            console.log("Nickname:", nickname);
+            console.log("Skills:", selectedSkills);
 
             // Show loading
             document.getElementById('selectedSkillsDisplay').classList.add('hidden');
@@ -700,8 +704,11 @@
             }, 1500);
 
             try {
+                console.log("=== MEMULAI FETCH KE BACKEND ===");
                 console.log('Sending nickname:', nickname);
                 console.log('Sending skills:', selectedSkills);
+                console.log('Fetch URL: /api/synthesize');
+                
                 const response = await fetch('/api/synthesize', {
                     method: 'POST',
                     headers: {
