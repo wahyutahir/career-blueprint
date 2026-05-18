@@ -746,79 +746,85 @@
             loadingState.classList.add('hidden');
             resultSection.classList.remove('hidden');
 
-            // Check if it's a fallback response (static logic)
+            // Check if it's a fallback response (static logic) - REJECT IT
             if (data.fallback) {
-                console.log("Using fallback static logic");
-                // Use old display logic for fallback
-                document.getElementById('identityTitle').textContent = data.title;
+                console.log("ERROR: Fallback triggered - Gemini API failed!");
+                console.error("This means the API key is not set in Railway or Gemini API call failed");
                 
+                // Show error message instead of static template
+                document.getElementById('identityTitle').textContent = '⚠️ Error: API Tidak Tersedia';
+                document.getElementById('identityDescription').innerHTML = `
+                    <p class="text-red-400 mb-4">Maaf, sistem AI Gemini tidak dapat diakses saat ini.</p>
+                    <p class="text-zinc-300 mb-4">Kemungkinan penyebab:</p>
+                    <ul class="list-disc list-inside text-zinc-300 mb-4">
+                        <li>API Key Gemini belum diset di Railway environment variables</li>
+                        <li>Kuota API Gemini habis</li>
+                        <li>Koneksi ke Gemini API gagal</li>
+                    </ul>
+                    <p class="text-zinc-300">Silakan hubungi admin untuk setup API key atau coba lagi nanti.</p>
+                `;
+                document.getElementById('matchedCategories').innerHTML = '';
+                document.getElementById('monetizationPaths').innerHTML = '';
+                
+                console.log("=== FRONTEND DISPLAY RESULT END ===");
+                resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                return;
+            }
+
+            // Use Gemini AI response
+            console.log("Using Gemini AI response");
+            console.log("Analysis string:", data.analysis);
+            
+            try {
+                // Parse the JSON analysis from Gemini
+                const analysis = JSON.parse(data.analysis);
+                console.log("Parsed analysis:", analysis);
+                
+                // Build the Wahyu Tahir style narrative
+                const nickname = data.nickname || 'Lo';
+                const skillsList = data.skills ? data.skills.join(', ') : '';
+                
+                const narrativeHTML = `
+                    <p class="text-zinc-300 mb-4"><b class="text-cyan-300">IDENTITAS UNIK LO:</b></p>
+                    <p class="text-xl font-bold text-cyan-400 mb-6">${analysis.identitas_unik}</p>
+                    
+                    <p class="text-zinc-300 mb-4">Halo <b class="text-cyan-300">${nickname}</b>, dari skill nanggung yang lo masukin (${skillsList}), lo itu punya potensi langka yang gak dimiliki semua orang.</p>
+                    
+                    <p class="text-zinc-300 mb-4"><b class="text-cyan-300">KENAPA LO LANGKA?</b></p>
+                    <p class="text-zinc-300 mb-6">${analysis.kenapa_langka}</p>
+                    
+                    <p class="text-zinc-300 mb-4"><b class="text-cyan-300">JALUR MONETISASI (Cara Lo Menghasilkan Uang):</b></p>
+                    <p class="text-zinc-300 mb-6">${analysis.jalur_monetisasi}</p>
+                    
+                    <div class="border-t border-zinc-800 pt-6 mt-6">
+                        <p class="text-yellow-400 font-bold mb-2">⚠️ TAPI INGAT!</p>
+                        <p class="text-zinc-300 mb-4">Tahu potensi doang itu ZONK kalau lo gak eksekusi. Besok pagi lo mau mulai dari mana?</p>
+                        <p class="text-zinc-300 mb-4">Gue udah siapin panduan task harian yang presisi selama 90 hari penuh buat wujudin identitas mahal lo ini.</p>
+                        <p class="text-zinc-300">Akses <b class="text-cyan-300">90-Day Dashboard</b> lo sekarang dengan memasukkan KODE AKSES E-book lo di menu atas, atau kalau lo belum punya e-book utamanya, ambil blueprint lo sekarang!</p>
+                    </div>
+                `;
+                
+                document.getElementById('identityTitle').textContent = analysis.identitas_unik;
                 const descriptionEl = document.getElementById('identityDescription');
-                descriptionEl.innerHTML = data.description;
+                descriptionEl.innerHTML = narrativeHTML;
                 
-                const boldElements = descriptionEl.querySelectorAll('b');
-                boldElements.forEach(el => {
-                    el.className = 'text-cyan-300';
-                });
-
-                const categoriesContainer = document.getElementById('matchedCategories');
-                categoriesContainer.innerHTML = '';
-                if (data.matchedCategories) {
-                    data.matchedCategories.forEach(category => {
-                        const badge = document.createElement('span');
-                        badge.className = 'px-3 py-1 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 rounded-lg text-xs text-cyan-300 font-medium';
-                        badge.textContent = category;
-                        categoriesContainer.appendChild(badge);
-                    });
-                }
-
-                const pathsContainer = document.getElementById('monetizationPaths');
-                pathsContainer.innerHTML = '';
-                if (data.monetizationPaths) {
-                    data.monetizationPaths.forEach((path, index) => {
-                        const pathEl = document.createElement('div');
-                        pathEl.className = 'p-4 bg-zinc-950/50 rounded-xl border border-zinc-800/50 hover:border-cyan-500/30 transition-colors';
-                        pathEl.innerHTML = path;
-                        pathsContainer.appendChild(pathEl);
-                    });
-                    
-                    const pathBoldElements = pathsContainer.querySelectorAll('b');
-                    pathBoldElements.forEach(el => {
-                        el.className = 'text-cyan-300';
-                    });
-                }
-            } else {
-                console.log("Using Gemini AI response");
-                console.log("Analysis string:", data.analysis);
-                // New Gemini AI response format
-                try {
-                    // Parse the JSON analysis from Gemini
-                    const analysis = JSON.parse(data.analysis);
-                    console.log("Parsed analysis:", analysis);
-                    
-                    // Set title from identitas_unik
-                    document.getElementById('identityTitle').textContent = analysis.identitas_unik;
-                    console.log("Set title:", analysis.identitas_unik);
-                    
-                    // Build description from kenapa_langka and jalur_monetisasi
-                    const descriptionEl = document.getElementById('identityDescription');
-                    descriptionEl.innerHTML = `
-                        <p class="text-zinc-300 mb-4">${analysis.kenapa_langka}</p>
-                        <p class="text-zinc-300">${analysis.jalur_monetisasi}</p>
-                    `;
-                    console.log("Set description");
-                    
-                    // Hide categories and monetization paths sections for AI response
-                    document.getElementById('matchedCategories').innerHTML = '';
-                    document.getElementById('monetizationPaths').innerHTML = '';
-                } catch (e) {
-                    console.error('Failed to parse AI response:', e);
-                    console.error('Analysis string that failed to parse:', data.analysis);
-                    // If parsing fails, display raw analysis
-                    document.getElementById('identityTitle').textContent = 'Identitas Karir Unik';
-                    document.getElementById('identityDescription').innerHTML = `<p class="text-zinc-300">${data.analysis}</p>`;
-                    document.getElementById('matchedCategories').innerHTML = '';
-                    document.getElementById('monetizationPaths').innerHTML = '';
-                }
+                // Hide categories and monetization paths sections for AI response
+                document.getElementById('matchedCategories').innerHTML = '';
+                document.getElementById('monetizationPaths').innerHTML = '';
+                
+                console.log("Successfully displayed Gemini response");
+            } catch (e) {
+                console.error('Failed to parse AI response:', e);
+                console.error('Analysis string that failed to parse:', data.analysis);
+                
+                // Show error if parsing fails
+                document.getElementById('identityTitle').textContent = '⚠️ Error: Format Response Salah';
+                document.getElementById('identityDescription').innerHTML = `
+                    <p class="text-red-400 mb-4">Maaf, format response dari AI tidak valid.</p>
+                    <p class="text-zinc-300">Raw response: ${data.analysis}</p>
+                `;
+                document.getElementById('matchedCategories').innerHTML = '';
+                document.getElementById('monetizationPaths').innerHTML = '';
             }
 
             console.log("=== FRONTEND DISPLAY RESULT END ===");
